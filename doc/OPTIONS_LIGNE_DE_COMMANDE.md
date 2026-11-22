@@ -8,9 +8,10 @@ Fortran. Les valeurs par défaut et certains chemins de calcul restent propres
 
 ## Choisir un exécutable
 
-Les cibles dont le nom commence par `test_main0_f90_` utilisent le pilote
-Fortran `main0.f90`. Les cibles `test_main0_cpp_` utilisent le pilote C++
-`main0.cpp`.
+Les executables utilisent soit le pilote Fortran `main0.f90`, soit le pilote C++
+`main0.cpp`. Sous MinGW, les cibles Fortran commencent par `test_main0_f90_`.
+Sous WSL, la combinaison `main0.f90 + cdmlib.f90` porte le nom
+`test_main_f90_cdmlib_f90_cuda_<precision>`; les autres gardent `test_main0_`.
 
 Les deux pilotes acceptent les mêmes options documentées ci-dessous. La
 précision `float` ou `double` ne change pas la syntaxe.
@@ -18,8 +19,8 @@ précision `float` ou `double` ne change pas la syntaxe.
 Sous WSL, les noms des principales cibles sont notamment :
 
 ```text
-test_main0_f90_cdmlib_f90_cuda_float
-test_main0_f90_cdmlib_f90_cuda_double
+test_main_f90_cdmlib_f90_cuda_float
+test_main_f90_cdmlib_f90_cuda_double
 test_main0_f90_cdmlib_cpp_cuda_float
 test_main0_f90_cdmlib_cpp_cuda_double
 test_main0_cpp_cdmlib_cpp_cuda_float
@@ -205,7 +206,7 @@ correspondantes.
 Cas Fortran hybride en simple précision sous WSL :
 
 ```bash
-./test_main0_f90_cdmlib_f90_cuda_float \
+./test_main_f90_cdmlib_f90_cuda_float \
   --geometry sphere --illumination pwavelinear \
   --grid-size 32 --epsilon 1.3,0.05 \
   --solver gpbicg1 --preconditioner 0 --tolerance 1e-4
