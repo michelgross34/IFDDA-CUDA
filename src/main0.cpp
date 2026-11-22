@@ -14,10 +14,12 @@
 #include <string.h>
 #include <errno.h>
 #include <limits.h>
-#include "../tests/geometry_cli_cases.h"
 extern "C" {
 #include "cdmlib_abi.h"
 }
+#ifndef IFDDA_TEST_COMPLEX
+#define IFDDA_TEST_COMPLEX(real_value, imag_value) cdmlib_complex((real_value), (imag_value))
+#endif
 
 static void *alloc_array(size_t n, size_t element) {
     void *p = calloc(n ? n : 1, element);
@@ -27,6 +29,32 @@ static void *alloc_array(size_t n, size_t element) {
 static void fstring(char *s, size_t n, const char *v) {
     size_t k = strlen(v); if (k > n) k = n;
     memset(s, 32, n); memcpy(s, v, k);
+}
+
+static int solver_name_equal(const char *lhs, const char *rhs);
+
+static const char *const ifdda_test_geometry_names[] = {
+    "concentricsphere", "sphere", "cube", "cuboid1", "cuboid2",
+    "inhomosphere", "inhomocuboid1", "inhomocuboid2", "ellipsoid",
+    "nspheres", "cylinder", "randomsphere1", "randomsphere2", "arbitrary",
+    "randomspheremulti1"
+};
+
+static int ifdda_test_geometry_case(const char *name) {
+    char *end = NULL;
+    long id = strtol(name,&end,10);
+    if(end!=name && *end=='\0' && id>=0 && id<15) return (int)id;
+    if (solver_name_equal(name, "0") || solver_name_equal(name, "concentric")) return 0;
+    if (solver_name_equal(name, "randommulti")) return 14;
+    for (size_t i=0;i<sizeof(ifdda_test_geometry_names)/sizeof(ifdda_test_geometry_names[0]);++i)
+        if (solver_name_equal(name, ifdda_test_geometry_names[i])) return (int)i;
+    return -1;
+}
+
+static void ifdda_test_geometry_usage(void) {
+    puts("Geometries: concentricsphere sphere cube cuboid1 cuboid2 inhomosphere");
+    puts("            inhomocuboid1 inhomocuboid2 ellipsoid nspheres cylinder");
+    puts("            randomsphere1 randomsphere2 arbitrary randomspheremulti1");
 }
 
 static int solver_name_equal(const char *lhs, const char *rhs) {
@@ -46,6 +74,8 @@ static const char *solver_method_from_name(const char *name) {
         const char *method;
     } solvers[] = {
         {"gpbicg", "GPBICG1"},
+        {"gpbicg1", "GPBICG1"},
+        {"bornserie", "BORNSERIE"},
         {"gpbicg2", "GPBICG2"},
         {"gpbicgsafe", "GPBICGsafe"},
         {"gpbicgplus", "GPBICGplus"},
@@ -53,6 +83,7 @@ static const char *solver_method_from_name(const char *name) {
         {"gpbicgar2", "GPBICGAR2"},
         {"ssbicgsafe2", "SSBICGSAFE2"},
         {"gpbicgstarplus", "BICGSTARPLUS"},
+        {"bicgstarplus", "BICGSTARPLUS"},
         {"tfqmr", "TFQMR"},
         {"zcg", "CG"},
         {"pimzbicgstab", "BICGSTAB"},
@@ -60,6 +91,7 @@ static const char *solver_method_from_name(const char *name) {
         {"qmrbicgstab1", "QMRBICGSTAB1"},
         {"qmrbicgstab2", "QMRBICGSTAB2"},
         {"qmrcla", "QMRCLA"},
+        {"pimzqmr", "QMRCLA"},
         {"gpbicor", "GPBICOR"},
         {"gcors2", "GCORS2"},
         {"cors", "CORS"},
@@ -142,9 +174,23 @@ static cdmlib_real cli_geometry_angles[3], cli_geometry_dimensions[3];
 static int cli_geometry_angles_set = 0, cli_geometry_dimensions_set = 0;
 static cdmlib_real cli_geometry_density = 0, cli_cell_size = 0;
 static int cli_geometry_density_set = 0, cli_cell_size_set = 0;
-static int cli_microscope = -1, cli_microscope_type = -1;
+static int cli_microscope = -1, cli_microscope_type = -1, cli_microscope_side = -1;
 static cdmlib_real cli_na = 0, cli_magnification = 0, cli_lens_z = 0;
 static int cli_na_set = 0, cli_magnification_set = 0, cli_lens_z_set = 0;
+static int cli_grid_dimensions[3], cli_grid_dimensions_set = 0;
+static int cli_padding[3], cli_padding_set = 0;
+static cdmlib_real cli_geometry_center[3], cli_gaussian_center[3];
+static int cli_geometry_center_set = 0, cli_gaussian_center_set = 0;
+static cdmlib_real cli_condenser_na = 0, cli_inner_na = 0, cli_na_center[2];
+static int cli_condenser_na_set = 0, cli_inner_na_set = 0, cli_na_center_set = 0;
+static cdmlib_real cli_side_length = 0;
+static int cli_side_length_set = 0, cli_geometry_only = -1, cli_geometry_only_set = 0;
+static int cli_save_mode = -1, cli_save_mode_set = 0, cli_read_field = -1, cli_read_field_set = 0;
+static char cli_polarizability[3] = "RR", cli_isotropy[4] = "iso";
+static int cli_polarizability_set = 0, cli_isotropy_set = 0;
+static char cli_field_file[64], cli_object_file[64], cli_hdf5_file[100], cli_arbitrary_file[64];
+static int cli_field_file_set = 0, cli_object_file_set = 0, cli_hdf5_file_set = 0, cli_arbitrary_file_set = 0;
+static int cli_method_case = -1, cli_option_case = -1;
 
 static int parse_triplet(const char *text, cdmlib_real out[3]) {
     double a, b, c;
@@ -174,9 +220,30 @@ static int parse_real_value(const char *text, cdmlib_real *out) {
     return 1;
 }
 
+static int parse_csv_values(const char *text, cdmlib_real *out, size_t count) {
+    const char *p = text;
+    for (size_t i = 0; i < count; ++i) {
+        char *end = NULL;
+        double v = strtod(p, &end);
+        if (end == p) return 0;
+        out[i] = (cdmlib_real)v;
+        if (i + 1 < count) { if (*end != ',') return 0; p = end + 1; }
+        else if (*end != '\0') return 0;
+    }
+    return 1;
+}
+
+static int copy_cli_filename(char *dst, size_t capacity, const char *src) {
+    size_t n = strlen(src);
+    if (n == 0 || n >= capacity) return 0;
+    memcpy(dst, src, n + 1);
+    return 1;
+}
+
 static int parse_solver_option(int argc, char **argv, const char **method,
                                int *geometry_case, const char **illumination) {
-    int i;
+    int i, option_start = 1;
+    int solver_was_named = 0;
     *method = "GPBICG1";
     *geometry_case = -1;
     *illumination = "pwavelinear";
@@ -198,9 +265,30 @@ static int parse_solver_option(int argc, char **argv, const char **method,
     cli_epsilon_set = 0;
     cli_geometry_angles_set = cli_geometry_dimensions_set = 0;
     cli_geometry_density_set = cli_cell_size_set = 0;
-    cli_microscope = cli_microscope_type = -1;
+    cli_microscope = cli_microscope_type = cli_microscope_side = -1;
     cli_na_set = cli_magnification_set = cli_lens_z_set = 0;
-    for (i = 1; i < argc; ++i) {
+    cli_grid_dimensions_set = cli_padding_set = 0;
+    cli_geometry_center_set = cli_gaussian_center_set = 0;
+    cli_condenser_na_set = cli_inner_na_set = cli_na_center_set = 0;
+    cli_side_length_set = cli_geometry_only_set = cli_save_mode_set = 0;
+    cli_read_field_set = cli_polarizability_set = cli_isotropy_set = 0;
+    cli_field_file_set = cli_object_file_set = cli_hdf5_file_set = cli_arbitrary_file_set = 0;
+    cli_method_case = cli_option_case = -1;
+    for (int j = 1; j < argc; ++j) {
+        if (strncmp(argv[j], "--", 2) == 0) { option_start=j; break; }
+        option_start=j+1;
+        int v = 0;
+        if (j == 0) continue;
+        if (j == 1) { if (!parse_int_value(argv[j], &v) || v < 0 || v > 14) return -1; *geometry_case = v; }
+        else if (j == 2) { if (!parse_int_value(argv[j], &v)) return -1; static const char *const beams[] = {"pwavelinear","pwavecircular","wavelinearmulti","antenna","gparawavelinear","gparawavecircular","gwavelinear","gwavecircular","arbitrary","gfftwavelinear","gfftwavecircular","greentensor","speckle","demispeckle","confocal","demiconfocal"}; if(v<200||v>215)return -1; *illumination=beams[v-200]; }
+        else if (j == 3) { if (!parse_int_value(argv[j], &v) || v < 0 || v > 15) return -1; cli_nrig_value=v; }
+        else if (j == 4) { if (!parse_int_value(argv[j], &v) || v < 0 || v > 24) return -1; cli_method_case=v; }
+        else if (j == 5) { if (!parse_int_value(argv[j], &v) || v < 0 || v > 2) return -1; cli_preconditioner_value=v; }
+        else if (j == 6) { if (!parse_int_value(argv[j], &v) || v < 0 || v > 5) return -1; cli_init_value=v; }
+        else if (j == 7) { if (!parse_int_value(argv[j], &v) || v < 0 || v > 28) return -1; cli_option_case=v; }
+        else { fprintf(stderr, "Too many positional arguments: %s\n", argv[j]); return -1; }
+    }
+    for (i = option_start; i < argc; ++i) {
         const char *name = NULL;
         if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
             puts("Usage: test0 [--solver NAME] [--geometry NAME] [--illumination NAME]");
@@ -214,6 +302,12 @@ static int parse_solver_option(int argc, char **argv, const char **method,
             puts("         --abc-type N --abc-nrbc X --abc-cos X (PML settings)");
             puts("         --quick-lens N --quick-diffraction N --local N --macro N");
             puts("         --power W --scattering-theta-points N --scattering-phi-points N");
+            puts("         --method-case N --option-case N --grid-dimensions NX,NY,NZ");
+            puts("         --geometry-center X,Y,Z --gaussian-center X,Y,Z --near-padding X,Y,Z");
+            puts("         --side-length X --geometry-only N --save-mode N --read-field N");
+            puts("         --polarizability CODE --isotropy iso|ani --field-file FILE --object-file FILE");
+            puts("         --hdf5-file FILE --arbitrary-file FILE --condenser-na X --inner-na X --na-center X,Y");
+            puts("         Legacy positional form: GEOMETRY_ID BEAM_ID NRIG_ID METHOD_ID PRECONDITIONER_ID INITIAL_GUESS_ID OPTION_ID");
             ifdda_test_geometry_usage();
             puts("Solver names: gpbicg, gpbicg2, gpbicgsafe, gpbicgplus,");
             puts("  gpbicgar, gpbicgar2, ssbicgsafe2, gpbicgstarplus, tfqmr, zcg,");
@@ -286,6 +380,11 @@ static int parse_solver_option(int argc, char **argv, const char **method,
             }
             if (strcmp(key, "grid-size") == 0) {
                 if (!parse_int_value(value, &cli_grid_size)) return -1;
+            } else if (strcmp(key, "grid-dimensions") == 0) {
+                cdmlib_real dims[3];
+                if (!parse_csv_values(value,dims,3)) return -1;
+                for(int d=0;d<3;++d) { if(dims[d]<8 || dims[d]>256 || (int)dims[d]!=dims[d]) return -1; cli_grid_dimensions[d]=(int)dims[d]; }
+                cli_grid_dimensions_set=1;
             } else if (strcmp(key, "nfft2d") == 0) {
                 if (!parse_int_value(value, &cli_nfft2d)) return -1;
             } else if (strcmp(key, "nrig") == 0) {
@@ -375,6 +474,8 @@ static int parse_solver_option(int argc, char **argv, const char **method,
                 if (!parse_int_value(value, &cli_microscope)) return -1;
             } else if (strcmp(key, "microscope-type") == 0) {
                 if (!parse_int_value(value, &cli_microscope_type)) return -1;
+            } else if (strcmp(key, "microscope-side") == 0) {
+                if (!parse_int_value(value, &cli_microscope_side)) return -1;
             } else if (strcmp(key, "na") == 0) {
                 if (!parse_real_value(value, &cli_na)) return -1;
                 cli_na_set = 1;
@@ -386,6 +487,48 @@ static int parse_solver_option(int argc, char **argv, const char **method,
                 cli_lens_z_set = 1;
             } else if (strcmp(key, "illumination-na") == 0) {
                 if (!parse_real_value(value, &cli_illumination_na)) return -1;
+            } else if (strcmp(key, "method-case") == 0) {
+                if (!parse_int_value(value,&cli_method_case) || cli_method_case<0 || cli_method_case>24) return -1;
+            } else if (strcmp(key, "option-case") == 0) {
+                if (!parse_int_value(value,&cli_option_case) || cli_option_case<0 || cli_option_case>28) return -1;
+            } else if (strcmp(key, "geometry-center") == 0) {
+                if(!parse_csv_values(value,cli_geometry_center,3)) return -1; cli_geometry_center_set=1;
+            } else if (strcmp(key, "gaussian-center") == 0) {
+                if(!parse_csv_values(value,cli_gaussian_center,3)) return -1; cli_gaussian_center_set=1;
+            } else if (strcmp(key, "near-padding") == 0) {
+                cdmlib_real p[3]; if(!parse_csv_values(value,p,3)) return -1;
+                for(int d=0;d<3;++d) { if(p[d]<0 || (int)p[d]!=p[d]) return -1; cli_padding[d]=(int)p[d]; }
+                cli_padding_set=1;
+            } else if (strcmp(key, "side-length") == 0) {
+                if(!parse_real_value(value,&cli_side_length) || cli_side_length<=0) return -1; cli_side_length_set=1;
+            } else if (strcmp(key, "geometry-only") == 0) {
+                if(!parse_int_value(value,&cli_geometry_only)) return -1; cli_geometry_only_set=1;
+            } else if (strcmp(key, "save-mode") == 0) {
+                if(!parse_int_value(value,&cli_save_mode)) return -1; cli_save_mode_set=1;
+            } else if (strcmp(key, "read-field") == 0) {
+                if(!parse_int_value(value,&cli_read_field)) return -1; cli_read_field_set=1;
+            } else if (strcmp(key, "polarizability") == 0) {
+                static const char *const valid[] = {"CM","RR","PS","GB","LA","LR","LS","FG"};
+                int valid_code=0;
+                for(size_t p=0;p<sizeof(valid)/sizeof(valid[0]);++p) if(strcmp(value,valid[p])==0) valid_code=1;
+                if(!valid_code) return -1;
+                memcpy(cli_polarizability,value,3); cli_polarizability_set=1;
+            } else if (strcmp(key, "isotropy") == 0) {
+                if(strcmp(value,"iso") && strcmp(value,"ani")) return -1; strcpy(cli_isotropy,value); cli_isotropy_set=1;
+            } else if (strcmp(key, "condenser-na") == 0) {
+                if(!parse_real_value(value,&cli_condenser_na)) return -1; cli_condenser_na_set=1;
+            } else if (strcmp(key, "inner-na") == 0) {
+                if(!parse_real_value(value,&cli_inner_na)) return -1; cli_inner_na_set=1;
+            } else if (strcmp(key, "na-center") == 0) {
+                if(!parse_csv_values(value,cli_na_center,2)) return -1; cli_na_center_set=1;
+            } else if (strcmp(key, "field-file") == 0) {
+                if(!copy_cli_filename(cli_field_file,sizeof cli_field_file,value)) return -1; cli_field_file_set=1;
+            } else if (strcmp(key, "object-file") == 0) {
+                if(!copy_cli_filename(cli_object_file,sizeof cli_object_file,value)) return -1; cli_object_file_set=1;
+            } else if (strcmp(key, "hdf5-file") == 0) {
+                if(!copy_cli_filename(cli_hdf5_file,sizeof cli_hdf5_file,value)) return -1; cli_hdf5_file_set=1;
+            } else if (strcmp(key, "arbitrary-file") == 0) {
+                if(!copy_cli_filename(cli_arbitrary_file,sizeof cli_arbitrary_file,value)) return -1; cli_arbitrary_file_set=1;
             } else if (strcmp(key, "epsilon") == 0) {
                 double real_value = 0;
                 double imag_value = 0;
@@ -408,6 +551,11 @@ static int parse_solver_option(int argc, char **argv, const char **method,
             fprintf(stderr, "Unsupported solver: %s. Use --help for the list.\n", name);
             return -1;
         }
+        solver_was_named = 1;
+    }
+    if (!solver_was_named && cli_method_case >= 0) {
+        static const char *const methods[25] = {"GPBICG1","GPBICG1","GPBICG2","GPBICGplus","GPBICGsafe","GPBICGAR","GPBICGAR2","BICGSTARPLUS","GPBICOR","CORS","QMRCLA","TFQMR","CG","BICGSTAB","QMRBICGSTAB1","QMRBICGSTAB2","IDRS2","IDRS4","IDRS8","BICGLSTAB2","BICGLSTAB4","BICGLSTAB8","GPBICGSTABL2","GPBICGSTABL4","GPBICG1"};
+        *method = methods[cli_method_case];
     }
     return 0;
 }
@@ -630,6 +778,8 @@ static int run_one_calculation(int argc, char **argv) {
     nnnr=nxm=nym=nzm=32; numberobjet=1; niso=1; nfft2d=128; nlar=42;
     tolinit=1.e-4; nlim=1000; ninitest=1;
     if (cli_grid_size > 0) nnnr=nxm=nym=nzm=cli_grid_size;
+    if (cli_grid_dimensions_set) { nxm=cli_grid_dimensions[0]; nym=cli_grid_dimensions[1]; nzm=cli_grid_dimensions[2]; nnnr=nxm<nym?(nxm<nzm?nxm:nzm):(nym<nzm?nym:nzm); }
+    if (cli_isotropy_set && strcmp(cli_isotropy,"ani")==0) niso=3;
     if (cli_nfft2d > 0) nfft2d=cli_nfft2d;
     if (cli_nrig_value >= 0) nrig=cli_nrig_value;
     if (cli_nquad_value >= 0) nquad=cli_nquad_value;
@@ -637,6 +787,7 @@ static int run_one_calculation(int argc, char **argv) {
     if (cli_init_value >= 0) ninitest=cli_init_value;
     const char* geometry_ani=getenv("IFDDA_TEST_GEOMETRY_ANIS");
     if(geometry_ani && strcmp(geometry_ani,"1")==0)niso=3;
+    if(cli_isotropy_set) niso=(strcmp(cli_isotropy,"ani")==0)?3:1;
     /* The Fortran ABI requires full 3*nzm block matrices for vector
        Chan preconditioning.  Match tests/test0/main.f90 exactly. */
     if (nprecon == 0) {
@@ -695,7 +846,37 @@ static int run_one_calculation(int argc, char **argv) {
     if (cli_scattering_phi_points >= 0) nphi=cli_scattering_phi_points;
     if(const char* matfiles=getenv("IFDDA_TEST_GEOMETRY_ASCII"))
         if(strcmp(matfiles,"1")==0)nmat=0;
-    nmat=ifdda_test_output_mode(nmat);
+    /* IFDDA_TEST_GEOMETRY_ASCII above remains the explicit output-mode override. */
+    switch(cli_option_case) {
+    case 1: nlocal=0; break; case 2: nmacro=0; break; case 3: nsection=0; break;
+    case 4: nsectionsca=1; ntheta=12; nphi=24; break;
+    case 5: nsectionsca=1; nquickdiffracte=1; break; case 6: nenergie=1; break;
+    case 7: nquad=1; break; case 8: nproche=1; break;
+    case 9: nproche=2; nnnr=6; nxmp=nymp=nzmp=1; break;
+    case 10: nforce=1; break; case 11: nforce=ntorque=1; break;
+    case 12: nlentille=1; ntypemic=0; nquicklens=0; break;
+    case 13: nlentille=1; ntypemic=0; nquicklens=1; break;
+    case 14: nlentille=1; ntypemic=0; nquicklens=0; nside=1; break;
+    case 15: case 16: case 17: case 18: case 19: case 20:
+        nlentille=1; ntypemic=cli_option_case-14; break;
+    case 21: nlentille=1; ntypemic=7; break;
+    case 22: nquad=2; break; case 23: nquad=3; break;
+    case 24: nquad=4; break; case 25: nquad=5; break;
+    case 26: nforce=nforced=1; break; case 27: nforce=ntorque=ntorqued=1; break;
+    case 28: nlecture=1; fstring(filereread,64,"coverage-nlecture"); break;
+    }
+    if(cli_local_value>=0)nlocal=cli_local_value;
+    if(cli_macro_value>=0)nmacro=cli_macro_value;
+    if(cli_force_value>=0)nforce=cli_force_value;
+    if(cli_force_density_value>=0)nforced=cli_force_density_value;
+    if(cli_torque_value>=0)ntorque=cli_torque_value;
+    if(cli_torque_density_value>=0)ntorqued=cli_torque_density_value;
+    if(cli_energy_value>=0)nenergie=cli_energy_value;
+    if(cli_near_domain_set)nproche=cli_near_domain_value;
+    if(cli_padding_set && nproche!=2) { fputs("--near-padding requires --near-domain 2\n",stderr); return EXIT_FAILURE; }
+    if(cli_padding_set) { nxmp=cli_padding[0]; nymp=cli_padding[1]; nzmp=cli_padding[2]; }
+    if(cli_geometry_only_set)nobjet=cli_geometry_only;
+    if(cli_save_mode_set)nmat=cli_save_mode;
     printf("[IF-DDA] Vector solver driver: inverserigopt (nproche=%d)\n",
            nproche);
     numaper=0.9; numaperinc=0.9; zlens=200.; gross=100.;
@@ -719,6 +900,15 @@ static int run_one_calculation(int argc, char **argv) {
     }
     fstring(h5file,100,"ifdda.h5"); fstring(namefileobj,64,"");
     fstring(namefileinc,64,""); memset(infostr,32,64);
+    if (cli_polarizability_set) fstring(polarizability,2,cli_polarizability);
+    if (cli_hdf5_file_set) fstring(h5file,100,cli_hdf5_file);
+    if (cli_object_file_set) fstring(namefileobj,64,cli_object_file);
+    if (cli_field_file_set) fstring(filereread,64,cli_field_file);
+    if (cli_arbitrary_file_set) fstring(namefileinc,64,cli_arbitrary_file);
+    if (cli_read_field_set) nlecture=cli_read_field;
+    if (cli_save_mode_set) nmat=cli_save_mode;
+    if (cli_option_case==28) { nlecture=1; fstring(filereread,64,"coverage-nlecture"); }
+    if (cli_isotropy_set) fstring(trope,3,cli_isotropy);
     memset(materiaumulti,32,sizeof materiaumulti);
     fstring(materiaumulti,64,"xx");
     size_t cells=(size_t)nxm*nym*nzm, fft=(size_t)nfft2d*nfft2d;
@@ -772,6 +962,8 @@ static int run_one_calculation(int argc, char **argv) {
     if (cli_pp_value != 0) pp=cli_pp_value;
     if (cli_ss_value != 0) ss=cli_ss_value;
     if (cli_illumination_na != 0) numaperil=cli_illumination_na;
+    if (cli_arbitrary_file_set) fstring(namefileinc,64,cli_arbitrary_file);
+    if (cli_gaussian_center_set) { xgaus=cli_gaussian_center[0]; ygaus=cli_gaussian_center[1]; zgaus=cli_gaussian_center[2]; }
     forcet = static_cast<cdmlib_real *>(alloc_array(3, sizeof(cdmlib_real)));
     couplet = static_cast<cdmlib_real *>(alloc_array(3, sizeof(cdmlib_real)));
     forcexmulti = static_cast<cdmlib_real *>(alloc_array(2, sizeof(cdmlib_real)));
@@ -915,7 +1107,8 @@ static int run_one_calculation(int argc, char **argv) {
                ifdda_test_geometry_names[selected_geometry_case],
                selected_geometry_case);
     }
-    if (cli_grid_size > 0) nnnr=nxm=nym=nzm=cli_grid_size;
+    if (cli_grid_size > 0 && !cli_grid_dimensions_set) nnnr=nxm=nym=nzm=cli_grid_size;
+    else if (cli_grid_dimensions_set) { nxm=cli_grid_dimensions[0]; nym=cli_grid_dimensions[1]; nzm=cli_grid_dimensions[2]; nnnr=nxm<nym?(nxm<nzm?nxm:nzm):(nym<nzm?nym:nzm); }
     /* Match the Fortran coverage driver: --epsilon overrides every object,
        including both shells of concentricsphere. */
     if (cli_epsilon_set)
@@ -939,8 +1132,17 @@ static int run_one_calculation(int argc, char **argv) {
     }
     if (cli_geometry_density_set) density=cli_geometry_density;
     if (cli_cell_size_set) aretecube=cli_cell_size;
+    if (cli_side_length_set) side=sidex=sidey=sidez=cli_side_length;
+    if (cli_geometry_center_set) { xgmulti[0]=cli_geometry_center[0]; ygmulti[0]=cli_geometry_center[1]; zgmulti[0]=cli_geometry_center[2]; }
+    if (cli_geometry_only_set) nobjet=cli_geometry_only;
+    if (cli_padding_set) { nxmp=cli_padding[0]; nymp=cli_padding[1]; nzmp=cli_padding[2]; }
+    if (cli_condenser_na_set) numaperinc=cli_condenser_na;
+    if (cli_inner_na_set) numaperinc2=cli_inner_na;
+    if (cli_na_center_set) { kcnax=cli_na_center[0]; kcnay=cli_na_center[1]; }
+    if (cli_object_file_set) fstring(namefileobj,64,cli_object_file);
     if (cli_microscope>=0) nlentille=cli_microscope;
     if (cli_microscope_type>=0) ntypemic=cli_microscope_type;
+    if (cli_microscope_side>=0) nside=cli_microscope_side;
     if (cli_na_set) numaper=cli_na;
     if (cli_magnification_set) gross=cli_magnification;
     if (cli_lens_z_set) zlens=cli_lens_z;
@@ -954,6 +1156,7 @@ static int run_one_calculation(int argc, char **argv) {
         nobjet=1;
         puts("[IF-DDA] Geometry-only verification (no iterative solve)");
     }
+    if (cli_geometry_only_set) nobjet=cli_geometry_only;
     /* Append the GNU Fortran hidden string lengths after all explicit arguments. */
     cdmlib_(
         &lambda, &eps0i, &ntypeabc, &lnrbc, &lcos, beam,

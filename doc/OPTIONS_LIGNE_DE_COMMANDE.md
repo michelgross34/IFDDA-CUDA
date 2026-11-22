@@ -1,9 +1,10 @@
 # Options de la ligne de commande
 
 Ce document décrit les options des pilotes de calcul CUDA définis dans
-`src/main0.f90` et `src/main0.cpp`. Les deux pilotes ne reconnaissent pas
-exactement les mêmes options : les options propres à chaque pilote sont
-indiquées séparément.
+`src/main0.f90` et `src/main0.cpp`. Le parseur C++ accepte maintenant les
+mêmes noms d’options et les mêmes sept arguments positionnels que le pilote
+Fortran. Les valeurs par défaut et certains chemins de calcul restent propres
+à chaque pilote.
 
 ## Choisir un exécutable
 
@@ -93,8 +94,8 @@ Le pilote Fortran accepte les noms suivants avec `--solver` :
 `idrs4`, `idrs8`, `bicglstab2`, `bicglstab4`, `bicglstab8`,
 `gpbicgstabl2`, `gpbicgstabl4`, `gpbicgstabl8`.
 
-Le pilote C++ expose sa propre liste avec `--help`. Certains noms peuvent
-différer selon la variante ; l’aide de l’exécutable fait foi.
+Le pilote C++ expose aussi ces noms avec `--help`. Les alias `gpbicg` et
+`gpbicg1` sélectionnent tous deux `GPBICG1`.
 
 ## Options communes aux pilotes Fortran et C++
 
@@ -150,10 +151,10 @@ Les valeurs entières sont des sélecteurs transmis au programme. Pour les
 options dont la plage n’est pas indiquée ici, vérifier les contrôles de la
 variante et utiliser `--help`.
 
-## Options supplémentaires du pilote Fortran
+## Options étendues communes aux deux pilotes
 
-Ces options sont reconnues par `main0.f90`; elles ne sont pas toutes
-implémentées par `main0.cpp`.
+Ces options sont reconnues par les deux pilotes et sont appliquées aux
+paramètres correspondants de `cdmlib`.
 
 | Option | Valeur | Rôle |
 |---|---|---|
@@ -181,13 +182,12 @@ implémentées par `main0.cpp`.
 
 Le pilote C++ accepte aussi `--geometry-density`, `--geometry-angles`,
 `--geometry-dimensions` et `--cell-size`. La validité de ces paramètres
-dépend de la géométrie. Il ne prend pas en charge `--grid-dimensions` dans
-son parseur actuel.
+dépend de la géométrie.
 
 ## Arguments positionnels historiques du pilote Fortran
 
-Les sept premiers arguments positionnels restent acceptés pour les anciens
-scripts :
+Les sept arguments positionnels historiques sont acceptés par les deux
+pilotes :
 
 ```text
 GEOMETRY_ID BEAM_ID NRIG_ID METHOD_ID PRECONDITIONER_ID INITIAL_GUESS_ID OPTION_ID
