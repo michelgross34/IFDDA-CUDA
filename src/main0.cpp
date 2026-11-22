@@ -1118,6 +1118,7 @@ static int run_one_calculation(int argc, char **argv) {
     if (cli_geometry_angles_set) {
         thetaobj=cli_geometry_angles[0]; phiobj=cli_geometry_angles[1]; psiobj=cli_geometry_angles[2];
     }
+    if (cli_side_length_set) side=sidex=sidey=sidez=cli_side_length;
     if (cli_geometry_dimensions_set) {
         const cdmlib_real *d=cli_geometry_dimensions;
         if (d[0]<=0 || d[1]<=0 || d[2]<=0) {
@@ -1132,7 +1133,6 @@ static int run_one_calculation(int argc, char **argv) {
     }
     if (cli_geometry_density_set) density=cli_geometry_density;
     if (cli_cell_size_set) aretecube=cli_cell_size;
-    if (cli_side_length_set) side=sidex=sidey=sidez=cli_side_length;
     if (cli_geometry_center_set) { xgmulti[0]=cli_geometry_center[0]; ygmulti[0]=cli_geometry_center[1]; zgmulti[0]=cli_geometry_center[2]; }
     if (cli_geometry_only_set) nobjet=cli_geometry_only;
     if (cli_padding_set) { nxmp=cli_padding[0]; nymp=cli_padding[1]; nzmp=cli_padding[2]; }
