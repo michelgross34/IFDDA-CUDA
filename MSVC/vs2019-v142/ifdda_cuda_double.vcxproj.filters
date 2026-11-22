@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\random_bridge_c.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cdmlib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cdmlib_param.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\rytov_vector_field.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\calculforcefft_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\derivativefield2_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\espace_libre_derive_mat_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2d_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\computegcfft2d_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigoptscalaire_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigscalaireoptpd_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigscalaireoptpg_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\abcchi_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\produitmatvectfft_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\produitpolavect_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\produitfftmatvectopt_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\produitfftmatvectscalaire_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\calculgreenscalairefft_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\multilayerbornsca_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\calculatedate_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\green_tensor_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\geometry_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\dipole_map_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\object_all.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\geometry_dispatch_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\geometry_sphere_pml_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inhomogeneous_material_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\polaepsto0_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\polarizability_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\interpdielec_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gaussian_power_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicg_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgplus_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgsafe_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgar_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgar2_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicor_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cors_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\tfqmr_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\bicgstarplus_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\zcg_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\pimzbicgstab_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\qmrbicgstab_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\idrs_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\idrs_rng_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgstabl_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\bicglstab_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\pimzqmr_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\ssbicgsafe2_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gcors2_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gcors2_random_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\speckle_rng_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserig_all_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserig_legacy_bridge_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\chan_right_inverse_driver_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\chan_inverse_driver_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigscalaire_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigscalaire_abi_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\preconditionneur_apply_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\preconditionneur_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\rerangechamppola_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\preconditionneurscal_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cuda_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cuda_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\beampropagation_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\beampropagationmacro_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gaussianfft_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incident_field_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incidentarbitrary_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\rytov_vector_field_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\local_macro_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cross_sections_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\scattering_results_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\mie_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\micromasque_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsdf_fields_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsdf_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\hdf5_noop_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\quick_diffraction_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\energy_conservation_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\optical_force_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\derivechamp_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\pml_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\speckle_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\confocal_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsconfocal_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsbf_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsconfocal_legacy_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsconfocalfluo_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\widefield_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\calculwidefield_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\savemacroscopicfield_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\comparaisonxyz_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incidentarbitrarydercreate_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incidentarbitraryder1_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incidentarbitrarypos_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\relecture_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2dinckzneg_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2dlens_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2denergie_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2denergieconfocal_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2dinc_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsbfneg_CUDA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D98EDDAA-989D-30B8-826C-BFEDA4B840AC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

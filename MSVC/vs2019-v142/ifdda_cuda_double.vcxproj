@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{29F38106-9AD1-3E49-B72E-CC7B3DE0DA27}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>ifdda_cuda_double</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ifdda_cuda_double.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ifdda_cuda_double</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ifdda_cuda_double.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ifdda_cuda_double</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">ifdda_cuda_double.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">ifdda_cuda_double</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">ifdda_cuda_double.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">ifdda_cuda_double</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/ucrt" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/shared" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/um" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/winrt" /external:I "E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/src" /external:I "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/include" /FS</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;USE_FFTW;PRODUITMATVECTFFT_SINGLE_PRECISION=0;IFDDA_CUDA_INVERSE_DRIVER;IFDDA_CUDA_CHAN_INITIAL_RESIDENT;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;USE_FFTW;PRODUITMATVECTFFT_SINGLE_PRECISION=0;IFDDA_CUDA_INVERSE_DRIVER;IFDDA_CUDA_CHAN_INITIAL_RESIDENT;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\winrt;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\winrt;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/ucrt" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/shared" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/um" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/winrt" /external:I "E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/src" /external:I "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/include" /FS</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_FFTW;PRODUITMATVECTFFT_SINGLE_PRECISION=0;IFDDA_CUDA_INVERSE_DRIVER;IFDDA_CUDA_CHAN_INITIAL_RESIDENT;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_FFTW;PRODUITMATVECTFFT_SINGLE_PRECISION=0;IFDDA_CUDA_INVERSE_DRIVER;IFDDA_CUDA_CHAN_INITIAL_RESIDENT;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\winrt;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\winrt;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/ucrt" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/shared" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/um" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/winrt" /external:I "E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/src" /external:I "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/include" /FS</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_FFTW;PRODUITMATVECTFFT_SINGLE_PRECISION=0;IFDDA_CUDA_INVERSE_DRIVER;IFDDA_CUDA_CHAN_INITIAL_RESIDENT;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_FFTW;PRODUITMATVECTFFT_SINGLE_PRECISION=0;IFDDA_CUDA_INVERSE_DRIVER;IFDDA_CUDA_CHAN_INITIAL_RESIDENT;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\winrt;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\winrt;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/ucrt" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/shared" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/um" /external:I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/winrt" /external:I "E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/src" /external:I "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/include" /FS</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_FFTW;PRODUITMATVECTFFT_SINGLE_PRECISION=0;IFDDA_CUDA_INVERSE_DRIVER;IFDDA_CUDA_CHAN_INITIAL_RESIDENT;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_FFTW;PRODUITMATVECTFFT_SINGLE_PRECISION=0;IFDDA_CUDA_INVERSE_DRIVER;IFDDA_CUDA_CHAN_INITIAL_RESIDENT;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\winrt;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>E:\msna6\test_chat_on_steroid\if-dda-master\cdmlib_C99;E:\msna6\test_chat_on_steroid\if-dda-master\fftw;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\winrt;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\bin\cmake.exe" -SE:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC -BE:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/vs2019-v142 --check-stamp-file E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/vs2019-v142/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeCXXCompiler.cmake;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeRCCompiler.cmake;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXCompiler.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXCompilerABI.cpp;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCommonLanguageInclude.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCompilerIdDetection.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCXXCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerABI.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerId.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerSupport.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineRCCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeFindBinUtils.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeGenericSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeInitializeConfigs.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeLanguageInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseImplicitIncludeInfo.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseImplicitLinkInfo.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseLibraryArchitecture.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeRCCompiler.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeRCInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystem.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystemSpecificInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystemSpecificInitialize.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestCXXCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestCompilerCommon.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestRCCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ADSP-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ARMCC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ARMClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\AppleClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Borland-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\CMakeCommonCompilerMacros.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Clang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Cray-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\CrayClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\GHS-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IAR-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Intel-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\NVHPC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\OrangeC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\PGI-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\PathScale-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\SCO-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\TI-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\TIClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Tasking-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Watcom-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CompilerId\VS-10.vcxproj.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindCUDAToolkit.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindPackageHandleStandardArgs.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindPackageMessage.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Internal\CMakeDetermineLinkerId.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Internal\FeatureTesting.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-Determine-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-Initialize.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-MSVC-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-MSVC.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\bin\cmake.exe" -SE:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC -BE:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/vs2019-v142 --check-stamp-file E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/vs2019-v142/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeCXXCompiler.cmake;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeRCCompiler.cmake;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXCompiler.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXCompilerABI.cpp;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCommonLanguageInclude.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCompilerIdDetection.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCXXCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerABI.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerId.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerSupport.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineRCCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeFindBinUtils.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeGenericSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeInitializeConfigs.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeLanguageInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseImplicitIncludeInfo.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseImplicitLinkInfo.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseLibraryArchitecture.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeRCCompiler.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeRCInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystem.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystemSpecificInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystemSpecificInitialize.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestCXXCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestCompilerCommon.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestRCCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ADSP-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ARMCC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ARMClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\AppleClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Borland-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\CMakeCommonCompilerMacros.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Clang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Cray-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\CrayClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\GHS-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IAR-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Intel-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\NVHPC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\OrangeC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\PGI-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\PathScale-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\SCO-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\TI-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\TIClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Tasking-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Watcom-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CompilerId\VS-10.vcxproj.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindCUDAToolkit.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindPackageHandleStandardArgs.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindPackageMessage.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Internal\CMakeDetermineLinkerId.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Internal\FeatureTesting.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-Determine-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-Initialize.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-MSVC-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-MSVC.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\bin\cmake.exe" -SE:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC -BE:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/vs2019-v142 --check-stamp-file E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/vs2019-v142/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeCXXCompiler.cmake;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeRCCompiler.cmake;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXCompiler.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXCompilerABI.cpp;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCommonLanguageInclude.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCompilerIdDetection.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCXXCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerABI.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerId.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerSupport.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineRCCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeFindBinUtils.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeGenericSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeInitializeConfigs.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeLanguageInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseImplicitIncludeInfo.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseImplicitLinkInfo.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseLibraryArchitecture.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeRCCompiler.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeRCInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystem.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystemSpecificInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystemSpecificInitialize.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestCXXCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestCompilerCommon.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestRCCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ADSP-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ARMCC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ARMClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\AppleClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Borland-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\CMakeCommonCompilerMacros.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Clang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Cray-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\CrayClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\GHS-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IAR-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Intel-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\NVHPC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\OrangeC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\PGI-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\PathScale-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\SCO-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\TI-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\TIClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Tasking-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Watcom-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CompilerId\VS-10.vcxproj.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindCUDAToolkit.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindPackageHandleStandardArgs.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindPackageMessage.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Internal\CMakeDetermineLinkerId.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Internal\FeatureTesting.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-Determine-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-Initialize.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-MSVC-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-MSVC.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\bin\cmake.exe" -SE:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC -BE:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/vs2019-v142 --check-stamp-file E:/msna6/test_chat_on_steroid/if-dda-master/CUDA/MSVC/vs2019-v142/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeCXXCompiler.cmake;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeRCCompiler.cmake;E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\3.30.5\CMakeSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXCompiler.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXCompilerABI.cpp;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCXXInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCommonLanguageInclude.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeCompilerIdDetection.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCXXCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerABI.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerId.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineCompilerSupport.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineRCCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeDetermineSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeFindBinUtils.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeGenericSystem.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeInitializeConfigs.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeLanguageInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseImplicitIncludeInfo.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseImplicitLinkInfo.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeParseLibraryArchitecture.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeRCCompiler.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeRCInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystem.cmake.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystemSpecificInformation.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeSystemSpecificInitialize.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestCXXCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestCompilerCommon.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CMakeTestRCCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ADSP-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ARMCC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\ARMClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\AppleClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Borland-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\CMakeCommonCompilerMacros.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Clang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Cray-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\CrayClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\GHS-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IAR-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Intel-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\MSVC.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\NVHPC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\OrangeC-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\PGI-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\PathScale-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\SCO-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\TI-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\TIClang-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Tasking-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\Watcom-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\CompilerId\VS-10.vcxproj.in;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindCUDAToolkit.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindPackageHandleStandardArgs.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\FindPackageMessage.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Internal\CMakeDetermineLinkerId.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Internal\FeatureTesting.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-Determine-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-Initialize.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-MSVC-CXX.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows-MSVC.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\Windows.cmake;F:\Program Files\JetBrains\CLion   2024.3.2\bin\cmake\win\x64\share\cmake-3.30\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\random_bridge_c.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cdmlib.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vector;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vector;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">vector;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">vector;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cdmlib_param.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\rytov_vector_field.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\calculforcefft_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\derivativefield2_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\espace_libre_derive_mat_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2d_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\computegcfft2d_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigoptscalaire_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigscalaireoptpd_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigscalaireoptpg_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\abcchi_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\produitmatvectfft_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\produitpolavect_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\produitfftmatvectopt_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\produitfftmatvectscalaire_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\calculgreenscalairefft_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\multilayerbornsca_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\calculatedate_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\green_tensor_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\geometry_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\dipole_map_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\object_all.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\geometry_dispatch_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\geometry_sphere_pml_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inhomogeneous_material_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\polaepsto0_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\polarizability_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\interpdielec_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gaussian_power_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicg_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgplus_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgsafe_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgar_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgar2_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicor_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cors_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\tfqmr_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\bicgstarplus_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\zcg_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\pimzbicgstab_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\qmrbicgstab_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\idrs_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\idrs_rng_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gpbicgstabl_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\bicglstab_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\pimzqmr_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\ssbicgsafe2_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gcors2_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gcors2_random_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\speckle_rng_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserig_all_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserig_legacy_bridge_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\chan_right_inverse_driver_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\chan_inverse_driver_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigscalaire_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\inverserigscalaire_abi_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\preconditionneur_apply_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\preconditionneur_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\rerangechamppola_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\preconditionneurscal_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cuda_utils.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cuda_data.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\beampropagation_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\beampropagationmacro_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\gaussianfft_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incident_field_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incidentarbitrary_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\rytov_vector_field_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\local_macro_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\cross_sections_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\scattering_results_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\mie_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\micromasque_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsdf_fields_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsdf_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\hdf5_noop_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\quick_diffraction_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\energy_conservation_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\optical_force_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\derivechamp_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\pml_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\speckle_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\confocal_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsconfocal_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsbf_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsconfocal_legacy_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsconfocalfluo_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\widefield_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\calculwidefield_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\savemacroscopicfield_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\comparaisonxyz_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incidentarbitrarydercreate_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incidentarbitraryder1_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\incidentarbitrarypos_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\relecture_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2dinckzneg_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2dlens_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2denergie_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2denergieconfocal_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\diffractefft2dinc_CUDA.cpp" />
+    <ClCompile Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\src\microsbfneg_CUDA.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\MSVC\vs2019-v142\ZERO_CHECK.vcxproj">
+      <Project>{98DC31E8-CAA5-3F57-A3AC-EFE5DCB7FEEA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
