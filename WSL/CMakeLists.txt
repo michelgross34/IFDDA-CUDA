@@ -204,33 +204,33 @@ foreach(_precision IN ITEMS double float)
         set(_module_dir "${CMAKE_CURRENT_BINARY_DIR}/fortran_modules_${_precision}")
         file(MAKE_DIRECTORY "${_module_dir}")
 
-        add_library(ifdda_main_f90_cdmlib_f90_core_${_precision} STATIC
+        add_library(ifdda_cdmlib_f90_core_${_precision} STATIC
             "${IFDDA_CUDA_SOURCE_DIR}/cdmlib.f90"
             "${IFDDA_CUDA_SOURCE_DIR}/mod_precision.f90")
-        set_target_properties(ifdda_main_f90_cdmlib_f90_core_${_precision} PROPERTIES
+        set_target_properties(ifdda_cdmlib_f90_core_${_precision} PROPERTIES
             Fortran_PREPROCESS ON Fortran_MODULE_DIRECTORY "${_module_dir}")
-        ifdda_wsl_precision_settings(ifdda_main_f90_cdmlib_f90_core_${_precision} ${_precision})
-        target_compile_definitions(ifdda_main_f90_cdmlib_f90_core_${_precision} PRIVATE
+        ifdda_wsl_precision_settings(ifdda_cdmlib_f90_core_${_precision} ${_precision})
+        target_compile_definitions(ifdda_cdmlib_f90_core_${_precision} PRIVATE
             IFDDA_CUDA_INVERSE_DRIVER)
-        target_compile_options(ifdda_main_f90_cdmlib_f90_core_${_precision} PRIVATE
+        target_compile_options(ifdda_cdmlib_f90_core_${_precision} PRIVATE
             $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
-        target_include_directories(ifdda_main_f90_cdmlib_f90_core_${_precision} PUBLIC
+        target_include_directories(ifdda_cdmlib_f90_core_${_precision} PUBLIC
             "${_module_dir}")
-        target_link_libraries(ifdda_main_f90_cdmlib_f90_core_${_precision} PUBLIC
+        target_link_libraries(ifdda_cdmlib_f90_core_${_precision} PUBLIC
             OpenMP::OpenMP_Fortran)
 
         set(_leaf_sources ${IFDDA_CUDA_CPP_SOURCES})
         list(REMOVE_ITEM _leaf_sources "${IFDDA_CUDA_SOURCE_DIR}/cdmlib.cpp")
-        add_library(ifdda_main_f90_cdmlib_f90_cuda_leaf_${_precision} STATIC
+        add_library(ifdda_cuda_cpp_support_${_precision} STATIC
             ${_leaf_sources}
             "${IFDDA_CUDA_SOURCE_DIR}/rytov_vector_field.cpp")
-        ifdda_wsl_precision_settings(ifdda_main_f90_cdmlib_f90_cuda_leaf_${_precision} ${_precision})
-        target_compile_definitions(ifdda_main_f90_cdmlib_f90_cuda_leaf_${_precision} PRIVATE
+        ifdda_wsl_precision_settings(ifdda_cuda_cpp_support_${_precision} ${_precision})
+        target_compile_definitions(ifdda_cuda_cpp_support_${_precision} PRIVATE
             IFDDA_CUDA_INVERSE_DRIVER IFDDA_WSL_ABI_INT64_PLAN)
-        target_include_directories(ifdda_main_f90_cdmlib_f90_cuda_leaf_${_precision} PUBLIC
+        target_include_directories(ifdda_cuda_cpp_support_${_precision} PUBLIC
             "${IFDDA_CUDA_SOURCE_DIR}"
             "${IF_DDA_ROOT}/cdmlib_C99" "${CUDAToolkit_INCLUDE_DIRS}")
-        target_link_libraries(ifdda_main_f90_cdmlib_f90_cuda_leaf_${_precision} PUBLIC
+        target_link_libraries(ifdda_cuda_cpp_support_${_precision} PUBLIC
             ifdda_cuda_kernels_${_precision}
             OpenMP::OpenMP_CXX)
 
@@ -242,8 +242,8 @@ foreach(_precision IN ITEMS double float)
         target_compile_options(${_main_f90_cdmlib_f90_exe} PRIVATE
             $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
         target_link_libraries(${_main_f90_cdmlib_f90_exe} PRIVATE
-            ifdda_main_f90_cdmlib_f90_core_${_precision}
-            ifdda_main_f90_cdmlib_f90_cuda_leaf_${_precision})
+            ifdda_cdmlib_f90_core_${_precision}
+            ifdda_cuda_cpp_support_${_precision})
     endif()
 
     # Two independent entry points sharing the C++ cdmlib implementation:
@@ -270,12 +270,12 @@ foreach(_precision IN ITEMS double float)
         set(_cpp_module_dir
             "${CMAKE_CURRENT_BINARY_DIR}/fortran_cpp_modules_${_precision}")
         file(MAKE_DIRECTORY "${_cpp_module_dir}")
-        add_library(ifdda_cpp_main_precision_${_precision} STATIC
+        add_library(ifdda_fortran_precision_${_precision} STATIC
             "${IFDDA_CUDA_SOURCE_DIR}/mod_precision.f90")
-        set_target_properties(ifdda_cpp_main_precision_${_precision} PROPERTIES
+        set_target_properties(ifdda_fortran_precision_${_precision} PROPERTIES
             Fortran_PREPROCESS ON Fortran_MODULE_DIRECTORY "${_cpp_module_dir}")
-        ifdda_wsl_precision_settings(ifdda_cpp_main_precision_${_precision} ${_precision})
-        target_include_directories(ifdda_cpp_main_precision_${_precision} PUBLIC
+        ifdda_wsl_precision_settings(ifdda_fortran_precision_${_precision} ${_precision})
+        target_include_directories(ifdda_fortran_precision_${_precision} PUBLIC
             "${_cpp_module_dir}")
 
         set(_fortran_cpp_exe "test_main0_f90_cdmlib_cpp_cuda_${_precision}")
@@ -287,7 +287,7 @@ foreach(_precision IN ITEMS double float)
         target_compile_options(${_fortran_cpp_exe} PRIVATE
             $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
         target_link_libraries(${_fortran_cpp_exe} PRIVATE
-            ifdda_cpp_main_precision_${_precision}
+            ifdda_fortran_precision_${_precision}
             ifdda_cdmlib_cpp_cuda_${_precision})
 
         set(_cpp_cpp_exe "test_main0_cpp_cdmlib_cpp_cuda_${_precision}")
@@ -302,9 +302,9 @@ endforeach()
 if(IFDDA_CUDA_CHAN_INITIAL_RESIDENT)
     foreach(_precision IN ITEMS double float)
         if(IFDDA_WSL_BUILD_HYBRID)
-            target_compile_definitions(ifdda_main_f90_cdmlib_f90_core_${_precision} PRIVATE
+            target_compile_definitions(ifdda_cdmlib_f90_core_${_precision} PRIVATE
                 IFDDA_CUDA_CHAN_INITIAL_RESIDENT)
-            target_compile_definitions(ifdda_main_f90_cdmlib_f90_cuda_leaf_${_precision} PRIVATE
+            target_compile_definitions(ifdda_cuda_cpp_support_${_precision} PRIVATE
                 IFDDA_CUDA_CHAN_INITIAL_RESIDENT)
         endif()
         if(IFDDA_WSL_BUILD_CPP_CDMLIB)
