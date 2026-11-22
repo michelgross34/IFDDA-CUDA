@@ -37,6 +37,14 @@ fi
 mkdir -p -- "${BUILD_DIR}"
 BUILD_DIR="$(cd -- "${BUILD_DIR}" && pwd)"
 
+# Remove executables left by the previous eight-target configuration.
+for obsolete in \
+    test_cuda_float test_cuda_double \
+    test_hybrid_fortran_cdmlib_cuda_float test_hybrid_fortran_cdmlib_cuda_double \
+    test_main0_fortran_cdmlib_cpp_cuda_float test_main0_fortran_cdmlib_cpp_cuda_double; do
+    rm -f -- "${BUILD_DIR}/${obsolete}"
+done
+
 BUILD_TYPE="${IFDDA_BUILD_TYPE:-Release}"
 CUDA_ARCH="${IFDDA_CUDA_ARCH:-70}"
 JOBS="${IFDDA_BUILD_JOBS:-4}"
@@ -46,14 +54,12 @@ echo "[IFDDA] Sources CUDA : ${SOURCE_DIR}"
 echo "[IFDDA] Build         : ${BUILD_DIR}"
 echo "[IFDDA] Mode=${BUILD_TYPE}, CUDA SM=${CUDA_ARCH}, jobs=${JOBS}"
 
-# Les trois familles sont explicites pour compiler la totalite des cibles,
-# y compris le pilote C++ autonome normalement desactive par defaut.
+# Les trois familles demandees : main0.cpp + cdmlib.cpp,
+# main0.f90 + cdmlib.cpp, puis main0.f90 + cdmlib.f90, en deux precisions.
 cmake -S "${SCRIPT_DIR}" -B "${BUILD_DIR}" -G Ninja \
     -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
     -DCMAKE_CUDA_ARCHITECTURES="${CUDA_ARCH}" \
-    -DIFDDA_WSL_BUILD_HYBRID=ON \
-    -DIFDDA_WSL_BUILD_CPP=ON \
-    -DIFDDA_WSL_BUILD_CPP_CDMLIB=ON
+    -DIFDDA_CUDA_CHAN_INITIAL_RESIDENT=ON
 
 cmake --build "${BUILD_DIR}" --parallel "${JOBS}"
 

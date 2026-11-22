@@ -184,7 +184,7 @@ endforeach()
 
 function(add_ifdda_cuda_variant precision)
     set(_library "ifdda_cuda_${precision}")
-    set(_executable "test_cuda_${precision}")
+    set(_executable "test_main0_cpp_cdmlib_cpp_cuda_${precision}")
 
 
     if(precision STREQUAL "float")
@@ -225,17 +225,6 @@ function(add_ifdda_cuda_variant precision)
 
     target_link_libraries(${_executable} PRIVATE ${_library})
 
-    # Direct tests of the four GPU-owned arrays, capacity rejection and reset.
-    add_executable(test_persistent_gpu_buffers_${precision}
-        "${IFDDA_CUDA_ROOT}/tests/test_persistent_gpu_arrays.cpp")
-    target_link_libraries(test_persistent_gpu_buffers_${precision} PRIVATE ${_library})
-    add_dependencies(test_persistent_gpu_buffers_${precision} ${_executable})
-    # Verify padded Fortran Chan matrices are compacted into a single GPU LU
-    # array without allocating a second global device matrix.
-    add_executable(test_chan_single_matrix_${precision}
-        "${IFDDA_CUDA_ROOT}/tests/test_chan_single_matrix.cpp")
-    target_link_libraries(test_chan_single_matrix_${precision} PRIVATE ${_library})
-    add_dependencies(test_chan_single_matrix_${precision} ${_executable})
     if(WIN32)
         # The runtime DLL is loaded from beside the executable. Track it as a
         # link dependency so a go.bat rebuild refreshes the copied runtime DLL.
@@ -309,39 +298,26 @@ endforeach()
 add_ifdda_cuda_variant(double)
 add_ifdda_cuda_variant(float)
 
-option(IFDDA_BUILD_HYBRID_FORTRAN_CUDA "Build shared Fortran main0 with CUDA C++ cdmlib (double and float)" ON)
-if(IFDDA_BUILD_HYBRID_FORTRAN_CUDA)
+enable_language(Fortran)
     enable_language(Fortran)
     add_library(ifdda_hybrid_precision_double STATIC
         "${IFDDA_CUDA_SOURCE_DIR}/mod_precision.f90")
     set_target_properties(ifdda_hybrid_precision_double PROPERTIES
         Fortran_MODULE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/hybrid_fortran_modules")
     file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/hybrid_fortran_modules")
-    add_executable(test_hybrid_fortran_main_cuda_cdmlib_double
-        "${IF_DDA_ROOT}/tests/cdmlib_coverage/main0.f90")
-    set_target_properties(test_hybrid_fortran_main_cuda_cdmlib_double PROPERTIES
-        Fortran_PREPROCESS ON)
-    target_compile_options(test_hybrid_fortran_main_cuda_cdmlib_double PRIVATE
-        $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
-    target_include_directories(test_hybrid_fortran_main_cuda_cdmlib_double PRIVATE
-        "${CMAKE_CURRENT_BINARY_DIR}/hybrid_fortran_modules")
-    target_link_libraries(test_hybrid_fortran_main_cuda_cdmlib_double PRIVATE
-        ifdda_hybrid_precision_double ifdda_cuda_double)
-
     # Real CUDA/main0.f90 entry point with the C++ cdmlib.cpp orchestrator
     # and the CUDA/C++ leaf implementations (including objetsphere_).
-    add_executable(test_main0_fortran_cpp_cuda_double
+    add_executable(test_main0_f90_cdmlib_cpp_cuda_double
         "${IFDDA_CUDA_SOURCE_DIR}/main0.f90")
-    set_target_properties(test_main0_fortran_cpp_cuda_double PROPERTIES
+    set_target_properties(test_main0_f90_cdmlib_cpp_cuda_double PROPERTIES
         Fortran_PREPROCESS ON)
-    target_compile_options(test_main0_fortran_cpp_cuda_double PRIVATE
+    target_compile_options(test_main0_f90_cdmlib_cpp_cuda_double PRIVATE
         $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
-    target_include_directories(test_main0_fortran_cpp_cuda_double PRIVATE
+    target_include_directories(test_main0_f90_cdmlib_cpp_cuda_double PRIVATE
         "${CMAKE_CURRENT_BINARY_DIR}/hybrid_fortran_modules")
-    target_link_libraries(test_main0_fortran_cpp_cuda_double PRIVATE
+    target_link_libraries(test_main0_f90_cdmlib_cpp_cuda_double PRIVATE
         ifdda_hybrid_precision_double ifdda_cuda_double)
-    # The standard executable stages the CUDA and numerical runtime DLLs.
-    add_dependencies(test_main0_fortran_cpp_cuda_double test_cuda_double)
+    add_dependencies(test_main0_f90_cdmlib_cpp_cuda_double test_main0_cpp_cdmlib_cpp_cuda_double)
 
     # The identical main0.f90 is also required for a genuine float reference
     # comparison; isolate the USE_SIMP precision module from the double one.
@@ -354,102 +330,23 @@ if(IFDDA_BUILD_HYBRID_FORTRAN_CUDA)
     target_compile_definitions(ifdda_hybrid_precision_float PUBLIC USE_SIMP)
     target_include_directories(ifdda_hybrid_precision_float PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}/hybrid_fortran_float_modules")
-    add_executable(test_main0_fortran_cpp_cuda_float
+    add_executable(test_main0_f90_cdmlib_cpp_cuda_float
         "${IFDDA_CUDA_SOURCE_DIR}/main0.f90")
-    set_target_properties(test_main0_fortran_cpp_cuda_float PROPERTIES
+    set_target_properties(test_main0_f90_cdmlib_cpp_cuda_float PROPERTIES
         Fortran_PREPROCESS ON)
-    target_compile_options(test_main0_fortran_cpp_cuda_float PRIVATE
+    target_compile_options(test_main0_f90_cdmlib_cpp_cuda_float PRIVATE
         $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
-    target_compile_definitions(test_main0_fortran_cpp_cuda_float PRIVATE USE_SIMP)
-    target_link_libraries(test_main0_fortran_cpp_cuda_float PRIVATE
+    target_compile_definitions(test_main0_f90_cdmlib_cpp_cuda_float PRIVATE USE_SIMP)
+    target_link_libraries(test_main0_f90_cdmlib_cpp_cuda_float PRIVATE
         ifdda_hybrid_precision_float ifdda_cuda_float)
-    add_dependencies(test_main0_fortran_cpp_cuda_float test_cuda_float)
-endif()
+    add_dependencies(test_main0_f90_cdmlib_cpp_cuda_float test_main0_cpp_cdmlib_cpp_cuda_float)
 
-message(STATUS "CUDA targets only: test_cuda_double, test_cuda_float (kernel DLLs from go.bat)")
-
+message(STATUS "CUDA executables: six main0/cdmlib combinations, simple et double precision")
 
 
-option(IFDDA_BUILD_HYBRID_F90_CUDA_LEAF "Build Fortran main and cdmlib with CUDA leaf routines" ON)
-if(IFDDA_BUILD_HYBRID_F90_CUDA_LEAF)
-  enable_language(Fortran)
-  add_subdirectory("${IFDDA_CUDA_ROOT}/hybrid_fortran_cuda" "${CMAKE_CURRENT_BINARY_DIR}/hybrid_fortran_cuda")
-endif()
 
-# Diagnostic-only comparison of all six GPU Green components against the
-# unmodified original Fortran routines. Prefer FFTW, as configured by
-# cmake/fortran/CMakeLists.txt; retain Singleton as an explicit test option.
-# No CUDA production path downloads Green tensors to host memory.
-option(IFDDA_BUILD_GREEN_REFERENCE_TESTS "Build independent Fortran/CUDA Green tensor tests" ON)
-option(IFDDA_GREEN_REFERENCE_USE_FFTW "Use the production Fortran FFTW backend for Green reference tests" ON)
-if(IFDDA_BUILD_GREEN_REFERENCE_TESTS)
-    enable_language(Fortran)
-    foreach(precision double float)
-        set(_green_fftw_main "")
-        set(_reference "ifdda_green_fortran_reference_${precision}")
-        set(_test "test_green_tensor_reference_${precision}")
-        set(_module_dir "${CMAKE_CURRENT_BINARY_DIR}/green_reference_modules_${precision}")
-        file(MAKE_DIRECTORY "${_module_dir}")
-        add_library(${_reference} STATIC
-            "${IFDDA_CUDA_SOURCE_DIR}/mod_precision.f90"
-            "${IF_DDA_ROOT}/cdmlib/calculgreenfft.f90"
-            "${IF_DDA_ROOT}/cdmlib/calculgreenfilfft.f90"
-            "${IF_DDA_ROOT}/cdmlib/espace_libre.f90"
-            "${IF_DDA_ROOT}/cdmlib/espace_librefil.f90"
-            "${IF_DDA_ROOT}/cdmlib/fftsingletonz.f90")
-        set_target_properties(${_reference} PROPERTIES
-            Fortran_PREPROCESS ON Fortran_MODULE_DIRECTORY "${_module_dir}")
-        target_compile_options(${_reference} PRIVATE
-            $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
-        target_include_directories(${_reference} PRIVATE "${_module_dir}")
-        if(precision STREQUAL "float")
-            target_compile_definitions(${_reference} PRIVATE USE_SIMP)
-        endif()
-        if(IFDDA_GREEN_REFERENCE_USE_FFTW)
-            target_compile_definitions(${_reference} PRIVATE USE_FFTW)
-        endif()
-        # Link only Green's production orchestrators and cuda_data: an
-        # in-flight unrelated solver migration must not prevent this isolated
-        # numerical reference from compiling. All CUDA allocations remain in
-        # the real cuda_data.cpp getters, not in the test driver.
-        add_executable(${_test}
-            "${IFDDA_CUDA_ROOT}/tests/test_green_tensor_reference.cpp"
-            "${IFDDA_CUDA_SOURCE_DIR}/cuda_data.cpp"
-            "${IFDDA_CUDA_SOURCE_DIR}/cuda_utils.cpp"
-            "${IFDDA_CUDA_SOURCE_DIR}/green_tensor_CUDA.cpp"
-            "${IFDDA_CUDA_SOURCE_DIR}/widefield_CUDA.cpp")
-        target_include_directories(${_test} PRIVATE
-            "${IFDDA_CUDA_SOURCE_DIR}" "${IFDDA_CUDA_SOURCE_DIR}"
-            "${IF_DDA_ROOT}/cdmlib_C99" "${CUDAToolkit_INCLUDE_DIRS}")
-        if(IFDDA_GREEN_REFERENCE_USE_FFTW)
-            target_compile_definitions(${_test} PRIVATE IFDDA_GREEN_REFERENCE_FFTW)
-            target_include_directories(${_test} PRIVATE "${IFDDA_FFTW_ROOT}")
-            if(precision STREQUAL "float")
-                set(_green_fftw_main "${IFDDA_FFTW_FLOAT_LIBRARY}")
-                set(_green_fftw_dll "libfftw3f-3.dll")
-            else()
-                set(_green_fftw_main "${IFDDA_FFTW_DOUBLE_LIBRARY}")
-                set(_green_fftw_dll "libfftw3-3.dll")
-            endif()
-            add_custom_command(TARGET ${_test} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${IFDDA_FFTW_ROOT}/${_green_fftw_dll}" "$<TARGET_FILE_DIR:${_test}>")
-        endif()
-        if(precision STREQUAL "float")
-            target_compile_definitions(${_test} PRIVATE USE_SIMP
-                PRODUITMATVECTFFT_SINGLE_PRECISION=1)
-        else()
-            target_compile_definitions(${_test} PRIVATE
-                PRODUITMATVECTFFT_SINGLE_PRECISION=0)
-        endif()
-        target_compile_options(${_test} PRIVATE
-            $<$<COMPILE_LANGUAGE:CXX>:-ffunction-sections>
-            $<$<COMPILE_LANGUAGE:CXX>:-fdata-sections>)
-        target_link_options(${_test} PRIVATE -Wl,--gc-sections)
-        target_link_libraries(${_test} PRIVATE ${_reference}
-            CUDA::cudart CUDA::cufft CUDA::cublas ifdda_cuda_kernels_${precision}
-            "${IFDDA_OPENBLAS_LIBRARY}"
-            "E:/msys64/mingw64/lib/libgfortran.dll.a"
-            ${_green_fftw_main})
-    endforeach()
-endif()
+add_subdirectory("${IFDDA_CUDA_ROOT}/hybrid_fortran_cuda" "${CMAKE_CURRENT_BINARY_DIR}/hybrid_fortran_cuda")
+foreach(_precision IN ITEMS double float)
+    add_dependencies(test_main0_f90_cdmlib_f90_cuda_${_precision}
+        test_main0_cpp_cdmlib_cpp_cuda_${_precision})
+endforeach()

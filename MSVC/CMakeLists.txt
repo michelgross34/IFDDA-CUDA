@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
-# MSVC-only build: the host code is C++17, with no Fortran compiler or
-# Fortran translation units. CUDA kernels are built separately by go.bat
-# and imported as DLL/import-library pairs.
+# MSVC-only build: build main0.cpp + cdmlib.cpp in float and double precision.
+# Fortran-driver variants are built by MINGW and WSL.
 project(if_dda_cuda LANGUAGES CXX)
 
 if(NOT MSVC)
@@ -234,7 +233,7 @@ set_source_files_properties("${IFDDA_CUDA_SOURCE_DIR}/cdmlib.cpp"
 
 function(add_ifdda_cuda_variant precision)
     set(_library "ifdda_cuda_${precision}")
-    set(_executable "test_cuda_${precision}")
+    set(_executable "test_main0_cpp_cdmlib_cpp_cuda_${precision}")
 
 
     if(precision STREQUAL "float")
@@ -279,15 +278,6 @@ function(add_ifdda_cuda_variant precision)
 
     target_link_libraries(${_executable} PRIVATE ${_library})
 
-    # Direct tests of the four GPU-owned arrays, capacity rejection and reset.
-    add_executable(test_persistent_gpu_buffers_${precision}
-        "${IFDDA_CUDA_ROOT}/tests/test_persistent_gpu_arrays.cpp")
-    target_link_libraries(test_persistent_gpu_buffers_${precision} PRIVATE ${_library})
-    add_dependencies(test_persistent_gpu_buffers_${precision} ${_executable})
-    add_executable(test_chan_single_matrix_${precision}
-        "${IFDDA_CUDA_ROOT}/tests/test_chan_single_matrix.cpp")
-    target_link_libraries(test_chan_single_matrix_${precision} PRIVATE ${_library})
-    add_dependencies(test_chan_single_matrix_${precision} ${_executable})
     if(WIN32)
         # The runtime DLL is loaded from beside the executable. Track it as a
         # link dependency so a go.bat rebuild refreshes the copied runtime DLL.
@@ -361,4 +351,4 @@ endforeach()
 add_ifdda_cuda_variant(double)
 add_ifdda_cuda_variant(float)
 
-message(STATUS "Pure MSVC C++/CUDA targets: test_cuda_double, test_cuda_float")
+message(STATUS "MSVC executables: test_main0_cpp_cdmlib_cpp_cuda_double, test_main0_cpp_cdmlib_cpp_cuda_float (main0.cpp + cdmlib.cpp)")

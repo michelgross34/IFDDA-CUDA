@@ -8,25 +8,27 @@ Fortran. Les valeurs par défaut et certains chemins de calcul restent propres
 
 ## Choisir un exécutable
 
-Les cibles hybrides et les variantes dont le nom contient
-`test_main0_fortran_...` utilisent le pilote Fortran `main0.f90`. Elles
-acceptent les options Fortran décrites ci-dessous.
+Les cibles dont le nom commence par `test_main0_f90_` utilisent le pilote
+Fortran `main0.f90`. Les cibles `test_main0_cpp_` utilisent le pilote C++
+`main0.cpp`.
 
-Les cibles dont le nom contient `test_main0_cpp_...` et les anciennes cibles
-`test_cuda_float` / `test_cuda_double` utilisent `main0.cpp`. Elles acceptent
-le sous-ensemble C++ décrit plus bas. La précision `float` ou `double` ne
-change pas la syntaxe.
+Les deux pilotes acceptent les mêmes options documentées ci-dessous. La
+précision `float` ou `double` ne change pas la syntaxe.
 
 Sous WSL, les noms des principales cibles sont notamment :
 
 ```text
-test_hybrid_fortran_cdmlib_cuda_float
-test_hybrid_fortran_cdmlib_cuda_double
-test_main0_fortran_cdmlib_cpp_cuda_float
-test_main0_fortran_cdmlib_cpp_cuda_double
+test_main0_f90_cdmlib_f90_cuda_float
+test_main0_f90_cdmlib_f90_cuda_double
+test_main0_f90_cdmlib_cpp_cuda_float
+test_main0_f90_cdmlib_cpp_cuda_double
 test_main0_cpp_cdmlib_cpp_cuda_float
 test_main0_cpp_cdmlib_cpp_cuda_double
 ```
+
+MINGW et WSL fournissent ces six combinaisons. La configuration MSVC conserve
+uniquement les deux variantes `main0.cpp` + `cdmlib.cpp`, car elle ne requiert
+pas le compilateur Intel Fortran.
 
 ## Syntaxe générale
 
@@ -203,7 +205,7 @@ correspondantes.
 Cas Fortran hybride en simple précision sous WSL :
 
 ```bash
-./test_hybrid_fortran_cdmlib_cuda_float \
+./test_main0_f90_cdmlib_f90_cuda_float \
   --geometry sphere --illumination pwavelinear \
   --grid-size 32 --epsilon 1.3,0.05 \
   --solver gpbicg1 --preconditioner 0 --tolerance 1e-4

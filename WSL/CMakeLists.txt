@@ -40,12 +40,8 @@ get_filename_component(IFDDA_CUDA_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 get_filename_component(IFDDA_CUDA_SOURCE_DIR "${IFDDA_CUDA_ROOT}/src" ABSOLUTE)
 get_filename_component(IF_DDA_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
 
-option(IFDDA_WSL_BUILD_HYBRID
-    "Build the tested Fortran main+cdmlib with CUDA C++ leaf routines" ON)
-option(IFDDA_WSL_BUILD_CPP
-    "Also build the standalone C++ CUDA driver (different initial guess)" OFF)
-option(IFDDA_WSL_BUILD_CPP_CDMLIB
-    "Build complete Fortran and C++ main programs using cdmlib.cpp and CUDA" ON)
+set(IFDDA_WSL_BUILD_HYBRID ON)
+set(IFDDA_WSL_BUILD_CPP_CDMLIB ON)
 option(IFDDA_CUDA_CHAN_INITIAL_RESIDENT
     "Keep the standard right-Chan initial iterate on the CUDA device" ON)
 
@@ -239,7 +235,7 @@ foreach(_precision IN ITEMS double float)
             ifdda_cuda_kernels_${_precision} "${IFDDA_OPENBLAS_LIBRARY}"
             OpenMP::OpenMP_CXX)
 
-        set(_hybrid "test_hybrid_fortran_cdmlib_cuda_${_precision}")
+        set(_hybrid "test_main0_f90_cdmlib_f90_cuda_${_precision}")
         add_executable(${_hybrid} "${IFDDA_CUDA_SOURCE_DIR}/main0.f90")
         set_target_properties(${_hybrid} PROPERTIES Fortran_PREPROCESS ON)
         ifdda_wsl_precision_settings(${_hybrid} ${_precision})
@@ -249,29 +245,6 @@ foreach(_precision IN ITEMS double float)
         target_link_libraries(${_hybrid} PRIVATE
             ifdda_hybrid_f90_core_${_precision}
             ifdda_hybrid_cuda_leaf_${_precision})
-    endif()
-
-    if(IFDDA_WSL_BUILD_CPP)
-        add_library(ifdda_cuda_cpp_${_precision} STATIC
-            ${IFDDA_CUDA_CPP_SOURCES}
-            "${IFDDA_CUDA_SOURCE_DIR}/cdmlib_param.cpp"
-            "${IFDDA_CUDA_SOURCE_DIR}/rytov_vector_field.cpp")
-        ifdda_wsl_precision_settings(ifdda_cuda_cpp_${_precision} ${_precision})
-        target_compile_definitions(ifdda_cuda_cpp_${_precision} PRIVATE
-            IFDDA_CUDA_INVERSE_DRIVER IFDDA_WSL_ABI_INT64_PLAN)
-        target_include_directories(ifdda_cuda_cpp_${_precision} PUBLIC
-            "${IFDDA_CUDA_SOURCE_DIR}"
-            "${IF_DDA_ROOT}/cdmlib_C99" "${CUDAToolkit_INCLUDE_DIRS}")
-        target_link_libraries(ifdda_cuda_cpp_${_precision} PUBLIC
-            ifdda_cuda_kernels_${_precision} "${IFDDA_OPENBLAS_LIBRARY}"
-            OpenMP::OpenMP_CXX gfortran)
-        add_executable(test_cuda_${_precision}
-            "${IFDDA_CUDA_SOURCE_DIR}/main0.cpp")
-        # The driver and its library share the cdmlib scalar ABI.  Compile
-        # main0.cpp with the same precision as the linked implementation.
-        ifdda_wsl_precision_settings(test_cuda_${_precision} ${_precision})
-        target_link_libraries(test_cuda_${_precision} PRIVATE
-            ifdda_cuda_cpp_${_precision})
     endif()
 
     # Two independent entry points sharing the C++ cdmlib implementation:
@@ -306,7 +279,7 @@ foreach(_precision IN ITEMS double float)
         target_include_directories(ifdda_cpp_main_precision_${_precision} PUBLIC
             "${_cpp_module_dir}")
 
-        set(_fortran_cpp_exe "test_main0_fortran_cdmlib_cpp_cuda_${_precision}")
+        set(_fortran_cpp_exe "test_main0_f90_cdmlib_cpp_cuda_${_precision}")
         add_executable(${_fortran_cpp_exe}
             "${IFDDA_CUDA_SOURCE_DIR}/main0.f90")
         set_target_properties(${_fortran_cpp_exe} PROPERTIES
@@ -335,10 +308,6 @@ if(IFDDA_CUDA_CHAN_INITIAL_RESIDENT)
             target_compile_definitions(ifdda_hybrid_cuda_leaf_${_precision} PRIVATE
                 IFDDA_CUDA_CHAN_INITIAL_RESIDENT)
         endif()
-        if(IFDDA_WSL_BUILD_CPP)
-            target_compile_definitions(ifdda_cuda_cpp_${_precision} PRIVATE
-                IFDDA_CUDA_CHAN_INITIAL_RESIDENT)
-        endif()
         if(IFDDA_WSL_BUILD_CPP_CDMLIB)
             target_compile_definitions(ifdda_cdmlib_cpp_cuda_${_precision} PRIVATE
                 IFDDA_CUDA_CHAN_INITIAL_RESIDENT)
@@ -349,5 +318,4 @@ endif()
 message(STATUS "WSL CUDA toolkit: ${CUDAToolkit_VERSION}")
 message(STATUS "WSL CUDA architectures: ${CMAKE_CUDA_ARCHITECTURES}")
 message(STATUS "WSL hybrid Fortran/CUDA: ${IFDDA_WSL_BUILD_HYBRID}")
-message(STATUS "WSL standalone C++ CUDA: ${IFDDA_WSL_BUILD_CPP}")
-message(STATUS "WSL Fortran/C++ mains with cdmlib.cpp: ${IFDDA_WSL_BUILD_CPP_CDMLIB}")
+message(STATUS "WSL executable set: six main0/cdmlib combinations, float and double")
