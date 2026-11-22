@@ -47,7 +47,6 @@ option(IFDDA_CUDA_CHAN_INITIAL_RESIDENT
 
 find_package(CUDAToolkit REQUIRED)
 find_package(OpenMP REQUIRED COMPONENTS CXX Fortran)
-find_library(IFDDA_OPENBLAS_LIBRARY NAMES openblas REQUIRED)
 
 # Keep this list aligned with CUDA/CMakeLists.txt. In the hybrid build,
 # cdmlib.cpp is excluded: CUDA/cdmlib.f90 supplies the same entry point.
@@ -232,7 +231,7 @@ foreach(_precision IN ITEMS double float)
             "${IFDDA_CUDA_SOURCE_DIR}"
             "${IF_DDA_ROOT}/cdmlib_C99" "${CUDAToolkit_INCLUDE_DIRS}")
         target_link_libraries(ifdda_main_f90_cdmlib_f90_cuda_leaf_${_precision} PUBLIC
-            ifdda_cuda_kernels_${_precision} "${IFDDA_OPENBLAS_LIBRARY}"
+            ifdda_cuda_kernels_${_precision}
             OpenMP::OpenMP_CXX)
 
         set(_main_f90_cdmlib_f90_exe "test_main_f90_cdmlib_f90_cuda_${_precision}")
@@ -264,8 +263,8 @@ foreach(_precision IN ITEMS double float)
             "${IFDDA_CUDA_SOURCE_DIR}"
             "${IF_DDA_ROOT}/cdmlib_C99" "${CUDAToolkit_INCLUDE_DIRS}")
         target_link_libraries(ifdda_cdmlib_cpp_cuda_${_precision} PUBLIC
-            ifdda_cuda_kernels_${_precision} "${IFDDA_OPENBLAS_LIBRARY}"
-            OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran)
+            ifdda_cuda_kernels_${_precision}
+            OpenMP::OpenMP_CXX)
 
         # main0.f90 needs the Fortran precision module but not cdmlib.f90.
         set(_cpp_module_dir
