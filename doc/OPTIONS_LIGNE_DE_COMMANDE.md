@@ -1,19 +1,18 @@
 # Options de la ligne de commande
 
-Ce document décrit les options des pilotes de calcul CUDA définis dans
-`src/main0.f90` et `src/main0.cpp`. Le parseur C++ accepte maintenant les
-mêmes noms d’options et les mêmes sept arguments positionnels que le pilote
-Fortran. Les valeurs par défaut et certains chemins de calcul restent propres
-à chaque pilote.
+Ce document présente l’interface de commande commune de `main0.cpp` et
+`main0.f90`. Les options de calcul ci-dessous ont les mêmes noms et la même
+syntaxe dans les deux pilotes. Leurs valeurs par défaut peuvent toutefois
+différer.
 
 ## Choisir un exécutable
 
-Les executables utilisent soit le pilote Fortran `main0.f90`, soit le pilote C++
-`main0.cpp`. Sous MinGW, les cibles Fortran commencent par `test_main0_f90_`.
-Sous WSL, la combinaison `main0.f90 + cdmlib.f90` porte le nom
-`test_main_f90_cdmlib_f90_cuda_<precision>`; les autres gardent `test_main0_`.
+Les cibles `test_main0_f90_*` utilisent `main0.f90`; les cibles
+`test_main0_cpp_*` utilisent `main0.cpp`. Sous WSL, la combinaison
+`main0.f90 + cdmlib.f90` est nommée `test_main_f90_cdmlib_f90_cuda_<precision>`.
+Les autres noms de cibles sont listés dans les instructions de compilation.
 
-Les deux pilotes acceptent les mêmes options documentées ci-dessous. La
+Les deux pilotes acceptent les mêmes options de calcul documentées ci-dessous. La
 précision `float` ou `double` ne change pas la syntaxe.
 
 Sous WSL, les noms des principales cibles sont notamment :
@@ -33,28 +32,28 @@ pas le compilateur Intel Fortran.
 
 ## Syntaxe générale
 
-Les options nommées acceptent les deux formes suivantes :
+Les options de calcul communes acceptent les deux formes suivantes :
 
 ```text
 --option valeur
 --option=valeur
 ```
 
-Pour afficher l’aide intégrée, utiliser `-h` ou `--help`. Avec le pilote
-Fortran, placer cette option en premier argument. Les paramètres qui prennent
+Pour afficher l’aide intégrée, utiliser `-h` ou `--help` en premier argument.
+Les paramètres qui prennent
 plusieurs nombres sont séparés par des virgules, par exemple `--epsilon 1.3,0.05` ou
 `--grid-dimensions 32,24,16`.
 
-Pour le pilote Fortran, le lancement sans argument utilise par défaut une
-sphère `32^3`, l’illumination `pwavelinear`, `epsilon=1.6+0i`, le solveur
-`GPBICG1` et le préconditionneur `0`. Les valeurs par défaut du pilote C++
-sont définies séparément dans `main0.cpp`.
+Les valeurs par défaut sans argument sont celles du pilote Fortran : sphère
+`32^3`, illumination `pwavelinear`, `epsilon=1.6+0i`, solveur `GPBICG1` et
+préconditionneur `0`. Les valeurs par défaut du pilote C++ sont définies dans
+`main0.cpp` et peuvent différer ; cela ne change pas les noms d’options communs.
 
 ## Géométries, illuminations et solveurs
 
 ### Géométries nommées
 
-Le pilote Fortran accepte :
+Les deux pilotes acceptent les mêmes géométries et les mêmes alias :
 
 | Nom | Alias ou identifiant historique |
 |---|---|
@@ -74,9 +73,6 @@ Le pilote Fortran accepte :
 | `arbitrary` | `13` |
 | `randomspheremulti1` | `randommulti`, `14` |
 
-Le pilote C++ utilise sa liste de géométries de test intégrée ; lancer son
-`--help` pour l’afficher.
-
 ### Illuminations
 
 Les deux pilotes acceptent les noms suivants avec `--illumination` :
@@ -88,7 +84,7 @@ Les deux pilotes acceptent les noms suivants avec `--illumination` :
 
 ### Solveurs
 
-Le pilote Fortran accepte les noms suivants avec `--solver` :
+Les deux pilotes acceptent les noms suivants avec `--solver` :
 
 `gpbicg`, `gpbicg1`, `bornserie`, `gpbicg2`, `gpbicgplus`, `gpbicgsafe`,
 `gpbicgar`, `gpbicgar2`, `gpbicgstarplus`, `bicgstarplus`, `gpbicor`,
@@ -97,8 +93,8 @@ Le pilote Fortran accepte les noms suivants avec `--solver` :
 `idrs4`, `idrs8`, `bicglstab2`, `bicglstab4`, `bicglstab8`,
 `gpbicgstabl2`, `gpbicgstabl4`, `gpbicgstabl8`.
 
-Le pilote C++ expose aussi ces noms avec `--help`. Les alias `gpbicg` et
-`gpbicg1` sélectionnent tous deux `GPBICG1`.
+Les alias `gpbicg` et `gpbicg1` sélectionnent tous deux `GPBICG1` dans les deux
+pilotes.
 
 ## Options communes aux pilotes Fortran et C++
 
@@ -124,8 +120,8 @@ Le pilote C++ expose aussi ces noms avec `--help`. Les alias `gpbicg` et
 | `--radius` | Réel | Rayon utilisé par les géométries compatibles. |
 | `--geometry-angles` | `A,B,C` | Angles d’orientation de la géométrie. |
 | `--geometry-dimensions` | `A,B,C` | Dimensions de la géométrie, selon le type choisi. |
-| `--geometry-density` | Réel | Densité utilisée par les géométries compatibles ; le pilote C++ exige une valeur positive. |
-| `--cell-size` | Réel | Taille d’une cellule de discrétisation ; le pilote C++ exige une valeur positive. |
+| `--geometry-density` | Réel positif | Densité utilisée par les géométries compatibles. |
+| `--cell-size` | Réel positif | Taille d’une cellule de discrétisation. |
 | `--near-domain` | Entier | Sélectionne le domaine de calcul proche. |
 | `--background-epsilon` | Réel | Partie imaginaire de la permittivité du milieu ambiant. |
 | `--abc-type` | Entier | Type de condition absorbante. |
@@ -140,8 +136,8 @@ Le pilote C++ expose aussi ces noms avec `--help`. Les alias `gpbicg` et
 | `--force`, `--force-density` | Entier | Active ou sélectionne les calculs de force et de densité de force. |
 | `--torque`, `--torque-density` | Entier | Active ou sélectionne les calculs de couple et de densité de couple. |
 | `--energy` | Entier | Sélectionne le calcul énergétique. |
-| `--local-field` | Entier | Sélectionne la sortie du champ local. Le pilote C++ accepte aussi `--local`. |
-| `--macro-field` | Entier | Sélectionne la sortie du champ macroscopique. Le pilote C++ accepte aussi `--macro`. |
+| `--local-field` | Entier | Sélectionne la sortie du champ local. |
+| `--macro-field` | Entier | Sélectionne la sortie du champ macroscopique. |
 | `--microscope` | Entier | Sélectionne un mode microscope. |
 | `--microscope-type` | Entier | Sélectionne le type de microscope. |
 | `--na` | Réel | Ouverture numérique. |
@@ -150,9 +146,9 @@ Le pilote C++ expose aussi ces noms avec `--help`. Les alias `gpbicg` et
 | `--illumination-na` | Réel | Ouverture numérique de l’illumination. |
 | `--speckle-seed` | Entier | Graine du générateur aléatoire speckle. |
 
-Les valeurs entières sont des sélecteurs transmis au programme. Pour les
-options dont la plage n’est pas indiquée ici, vérifier les contrôles de la
-variante et utiliser `--help`.
+Les options et leurs noms sont communs aux deux pilotes. Les entiers sont des
+sélecteurs transmis au programme; les plages indiquées dans ce tableau
+s’appliquent aux deux interfaces.
 
 ## Options étendues communes aux deux pilotes
 
@@ -181,11 +177,15 @@ paramètres correspondants de `cdmlib`.
 | `--object-file` | Chemin | Fichier de description d’objet. |
 | `--arbitrary-file` | Chemin | Fichier pour la géométrie arbitraire. |
 | `--hdf5-file` | Chemin | Fichier HDF5 pour les variantes configurées avec HDF5. |
-### Options de géométrie C++ supplémentaires
+## Extensions de validation propres au pilote C++
 
-Le pilote C++ accepte aussi `--geometry-density`, `--geometry-angles`,
-`--geometry-dimensions` et `--cell-size`. La validité de ces paramètres
-dépend de la géométrie.
+Les options de calcul standard restent communes. Le pilote C++ conserve en plus
+les commutateurs de validation `--repeat-calculation N` (1 à 10) et
+`--second-grid-size N` (à utiliser avec `--repeat-calculation` supérieur ou égal
+à 2). Il accepte aussi `--local` comme alias de `--local-field` et `--macro`
+comme alias de `--macro-field`. Ces extensions ne font pas partie de l’interface
+commune de calcul. Les deux commutateurs de validation s’écrivent avec la valeur
+séparée par un espace.
 
 ## Arguments positionnels historiques du pilote Fortran
 

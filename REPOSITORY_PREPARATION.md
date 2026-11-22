@@ -218,3 +218,10 @@ Pour poursuivre, vÃ©rifier les diffÃ©rences et les fichiers ignorÃ©s, conf
 - L'utilisateur confirme que le code compile et fonctionne avec WSL, MSVC et MinGW. Cette information concerne sa verification locale; aucune sortie detaillee de compilation n'a ete recue dans cette session.
 - Les sources locales `src/kernel.cu` et `src/cdmlib_cpp_abi.hpp` ont ete synchronisees dans le clone GitHub. Les notices WSL, la documentation CLI et le README ont egalement ete actualises pour reflet les noms de cibles WSL et les quatre archives.
 - Aucune comparaison numerique simple/double avec la reference Fortran n'a ete fournie ici; le portage n'est pas marque comme valide numeriquement sur cette seule confirmation de compilation.
+
+### Clarification de la parite de ligne de commande — 22 novembre 2026
+
+- `doc/OPTIONS_LIGNE_DE_COMMANDE.md` presente maintenant un seul jeu d'options de calcul commun a `main0.cpp` et `main0.f90`, avec les options nommees, les valeurs, les geometries, illuminations, solveurs et arguments positionnels.
+- Retrait de l'affirmation selon laquelle certaines options de geometrie seraient propres au C++; `--geometry-density`, `--geometry-angles`, `--geometry-dimensions` et `--cell-size` figurent dans l'interface commune.
+- Transparence sur les seules extensions observees dans `main0.cpp` : aliases `--local`/`--macro` et commandes de validation `--repeat-calculation`/`--second-grid-size`. Elles sont separees de l'interface de calcul commune.
+- Document CLI synchronise dans `CUDA/github/doc`. Documentation seulement; aucun changement de source ou test de compilation.
