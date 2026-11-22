@@ -37,10 +37,11 @@ fi
 mkdir -p -- "${BUILD_DIR}"
 BUILD_DIR="$(cd -- "${BUILD_DIR}" && pwd)"
 
-# Remove executables left by the previous eight-target configuration.
+# Remove obsolete executable names left by earlier WSL configurations.
 for obsolete in \
     test_cuda_float test_cuda_double \
     test_hybrid_fortran_cdmlib_cuda_float test_hybrid_fortran_cdmlib_cuda_double \
+    test_main0_f90_cdmlib_f90_cuda_float test_main0_f90_cdmlib_f90_cuda_double \
     test_main0_fortran_cdmlib_cpp_cuda_float test_main0_fortran_cdmlib_cpp_cuda_double; do
     rm -f -- "${BUILD_DIR}/${obsolete}"
 done
