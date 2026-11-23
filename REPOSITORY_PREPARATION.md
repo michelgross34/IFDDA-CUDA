@@ -225,3 +225,9 @@ Pour poursuivre, vÃ©rifier les diffÃ©rences et les fichiers ignorÃ©s, conf
 - Retrait de l'affirmation selon laquelle certaines options de geometrie seraient propres au C++; `--geometry-density`, `--geometry-angles`, `--geometry-dimensions` et `--cell-size` figurent dans l'interface commune.
 - Transparence sur les seules extensions observees dans `main0.cpp` : aliases `--local`/`--macro` et commandes de validation `--repeat-calculation`/`--second-grid-size`. Elles sont separees de l'interface de calcul commune.
 - Document CLI synchronise dans `CUDA/github/doc`. Documentation seulement; aucun changement de source ou test de compilation.
+
+### README de compilation et d'utilisation — 23 novembre 2026
+
+- Rédaction du `README.md` à la racine de CUDA : présentation d'IFDDA-CUDA comme portage CUDA d'IFDDA, renvoi vers la référence CLI et commandes de compilation Linux/WSL, MinGW et MSVC.
+- Le guide rappelle que `build_all_cuda.bat` doit être lancé séparément avant les builds Windows afin de générer les wrappers DLL/import libraries CUDA float et double dans `src/`.
+- Documentation uniquement. Aucune compilation ou validation numérique n'a été effectuée pour cette modification.
