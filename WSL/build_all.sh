@@ -20,6 +20,13 @@ for required_file in \
     "${SOURCE_DIR}/cdmlib_cpp_abi.hpp" \
     "${SOURCE_DIR}/cdmlib_geometry_abi.hpp" \
     "${SOURCE_DIR}/cdmlib_cpp_fftw_precision.hpp" \
+    "${SOURCE_DIR}/cdmlib_abi.h" \
+    "${SOURCE_DIR}/cdmlib_config.h" \
+    "${SOURCE_DIR}/cdmlib_fftphase.h" \
+    "${SOURCE_DIR}/cdmlib_incidentphase.h" \
+    "${SOURCE_DIR}/cdmlib_initphase.h" \
+    "${SOURCE_DIR}/cdmlib_precision.h" \
+    "${SOURCE_DIR}/hdf5_helpers.h" \
     "${SOURCE_DIR}/plan_int64_abi.h" \
     "${SOURCE_DIR}/force_green_derivative_kernels.cuh" \
     "${SOURCE_DIR}/gaussian_incident_kernel.cuh" \
@@ -49,6 +56,26 @@ done
 BUILD_TYPE="${IFDDA_BUILD_TYPE:-Release}"
 CUDA_ARCH="${IFDDA_CUDA_ARCH:-70}"
 JOBS="${IFDDA_BUILD_JOBS:-4}"
+
+# CUDA 13 removed offline compilation for Volta (sm_70) and earlier.
+# Fail with a meaningful diagnostic rather than an obscure nvcc error.
+NVCC_BIN="${CUDACXX:-${CUDA_HOME:-/usr/local/cuda}/bin/nvcc}"
+if [[ ! -x "${NVCC_BIN}" ]]; then
+    NVCC_BIN="$(command -v nvcc || true)"
+fi
+if [[ -n "${NVCC_BIN}" ]]; then
+    NVCC_MAJOR="$("${NVCC_BIN}" --version | sed -nE 's/.*release ([0-9]+)\..*/\1/p' | tail -n 1)"
+    if [[ "${NVCC_MAJOR}" =~ ^[0-9]+$ ]] && (( NVCC_MAJOR >= 13 )); then
+        case ";${CUDA_ARCH};" in
+            *';50;'*|*';52;'*|*';53;'*|*';60;'*|*';61;'*|*';62;'*|*';70;'*|*';72;'*)
+                echo "[IFDDA] CUDA ${NVCC_MAJOR} ne peut pas compiler SM=${CUDA_ARCH}." >&2
+                echo "[IFDDA] GPU Volta/SM70 : utiliser CUDA 12.9 ou plus ancien." >&2
+                echo "[IFDDA] GPU recent : IFDDA_CUDA_ARCH=<sm reel> ./build_all.sh" >&2
+                exit 2
+                ;;
+        esac
+    fi
+fi
 
 echo "[IFDDA] Projet CMake : ${SCRIPT_DIR}"
 echo "[IFDDA] Sources CUDA : ${SOURCE_DIR}"

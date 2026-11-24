@@ -8,7 +8,10 @@ Les exécutables acceptent des options en ligne de commande. La liste des option
 
 - Un compilateur et un environnement CMake adaptés à la plateforme.
 - Le toolkit NVIDIA CUDA. Les projets Windows demandent CUDA Toolkit 11.8.x.
-- Le dépôt doit se trouver dans l'arborescence IF-DDA attendue par les CMake : ceux-ci utilisent aussi des dépendances situées dans le répertoire parent, notamment `cdmlib_C99` et les bibliothèques FFTW/OpenBLAS selon la variante.
+- Pour **Linux/WSL**, le dépôt est autonome : les en-têtes C99 nécessaires sont
+  inclus dans `src/` ; le projet ne dépend pas d'un répertoire frère
+  `cdmlib_C99`. Les variantes Windows MinGW/MSVC peuvent demander des
+  bibliothèques externes (notamment FFTW/OpenBLAS), selon leur configuration.
 
 ## Linux et WSL
 
@@ -22,6 +25,18 @@ cd WSL
 Le script configure le projet avec CMake et Ninja puis compile les six exécutables, en simple et double précision : `main0.cpp + cdmlib.cpp`, `main0.f90 + cdmlib.cpp` et `main0.f90 + cdmlib.f90`. Les exécutables sont placés dans `WSL/build/`.
 
 Il faut disposer de CMake, Ninja, d'un compilateur C++ et Fortran (par exemple GCC et gfortran), d'OpenMP et du toolkit CUDA avec `nvcc`. Le script choisit par défaut l'architecture CUDA SM 70, le mode Release et quatre tâches parallèles. Ces valeurs peuvent être ajustées avec `IFDDA_CUDA_ARCH`, `IFDDA_BUILD_TYPE`, `IFDDA_BUILD_JOBS` et `IFDDA_BUILD_DIR`.
+
+**Compatibilité CUDA :** le compilateur CUDA 13 ne prend plus en charge les
+architectures Volta `sm_70` (Titan V). Pour ce GPU, choisir un toolkit CUDA
+12.9 ou antérieur compatible ; pour un GPU plus récent, indiquer son
+architecture réelle, par exemple `IFDDA_CUDA_ARCH=86 ./build_all.sh` pour
+un GPU `sm_86`. La variable `IFDDA_CUDA_ARCH` n'est pas une version CUDA.
+
+En cas de mise à jour d'une ancienne archive, retélécharger la version corrigée :
+`src/cdmlib_abi.h`, `src/cdmlib_config.h` et les cinq autres en-têtes
+de compatibilité doivent être présents. Pour reconfigurer depuis zéro,
+supprimer uniquement l'ancien répertoire de compilation `WSL/build`
+(jamais `WSL` ni `src`), puis relancer `./build_all.sh`.
 
 ## Windows : préparation CUDA commune
 

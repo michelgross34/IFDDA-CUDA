@@ -38,7 +38,21 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 get_filename_component(IFDDA_CUDA_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 get_filename_component(IFDDA_CUDA_SOURCE_DIR "${IFDDA_CUDA_ROOT}/src" ABSOLUTE)
-get_filename_component(IF_DDA_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
+
+# The GitHub archive must build independently of the original if-dda-master
+# checkout. In particular, never rely on ../../cdmlib_C99: that directory
+# exists on the developer workstation but is absent on a fresh clone.
+# The seven required C99 interface headers are shipped under src/.
+foreach(_header IN ITEMS
+        cdmlib_abi.h cdmlib_config.h cdmlib_fftphase.h
+        cdmlib_incidentphase.h cdmlib_initphase.h
+        cdmlib_precision.h hdf5_helpers.h)
+    if(NOT EXISTS "${IFDDA_CUDA_SOURCE_DIR}/${_header}")
+        message(FATAL_ERROR
+            "Incomplete IFDDA-CUDA package: missing src/${_header}. "
+            "Please download the complete repository, including src/ headers.")
+    endif()
+endforeach()
 
 set(IFDDA_WSL_BUILD_HYBRID ON)
 set(IFDDA_WSL_BUILD_CPP_CDMLIB ON)
@@ -208,7 +222,7 @@ foreach(_precision IN ITEMS double float)
             $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
         target_include_directories(ifdda_cdmlib_f90_cuda_${_precision} PUBLIC
             "${IFDDA_CUDA_SOURCE_DIR}"
-            "${_module_dir}" "${IF_DDA_ROOT}/cdmlib_C99" "${CUDAToolkit_INCLUDE_DIRS}")
+            "${_module_dir}" "${CUDAToolkit_INCLUDE_DIRS}")
         target_compile_options(ifdda_cdmlib_f90_cuda_${_precision} PRIVATE
             $<$<AND:$<CONFIG:Debug>,$<COMPILE_LANGUAGE:CUDA>>:-G>
             $<$<AND:$<CONFIG:RelWithDebInfo>,$<COMPILE_LANGUAGE:CUDA>>:-lineinfo>)
@@ -246,7 +260,7 @@ foreach(_precision IN ITEMS double float)
             IFDDA_CUDA_INVERSE_DRIVER IFDDA_WSL_ABI_INT64_PLAN)
         target_include_directories(ifdda_cdmlib_cpp_cuda_${_precision} PUBLIC
             "${IFDDA_CUDA_SOURCE_DIR}"
-            "${IF_DDA_ROOT}/cdmlib_C99" "${CUDAToolkit_INCLUDE_DIRS}")
+            "${CUDAToolkit_INCLUDE_DIRS}")
         target_compile_options(ifdda_cdmlib_cpp_cuda_${_precision} PRIVATE
             $<$<AND:$<CONFIG:Debug>,$<COMPILE_LANGUAGE:CUDA>>:-G>
             $<$<AND:$<CONFIG:RelWithDebInfo>,$<COMPILE_LANGUAGE:CUDA>>:-lineinfo>)
