@@ -78,6 +78,7 @@ endif()
 
 # Compile the C++ scientific translation and CUDA-backed helper routines.
 # random_bridge_c.cpp provides a portable C++ RNG when built by MSVC.
+add_subdirectory("${IFDDA_CUDA_ROOT}/Scattnlay" Scattnlay EXCLUDE_FROM_ALL)
 set(IFDDA_CUDA_CPP_SOURCES
     "${IFDDA_CUDA_SOURCE_DIR}/random_bridge_c.cpp"
     "${IFDDA_CUDA_SOURCE_DIR}/cdmlib.cpp"
@@ -249,6 +250,7 @@ function(add_ifdda_cuda_variant precision)
     endif()
 
     add_library(${_library} STATIC ${IFDDA_CUDA_CPP_SOURCES})
+    ifdda_enable_scattnlay(${_library})
 
     # Visual Studio may compile several translation units against one /Zi PDB.
     # Serialize writes to that PDB (MSVC C1041 when /m or /MP is active).
@@ -295,6 +297,14 @@ function(add_ifdda_cuda_variant precision)
         add_custom_command(TARGET ${_executable} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 "${IFDDA_KERNEL_DLL_${precision}}" "$<TARGET_FILE_DIR:${_executable}>")
+        set(_mishchenko_dll "${CMAKE_CURRENT_LIST_DIR}/../Mishchenko/ifdda_mishchenko.dll")
+        if(EXISTS "${_mishchenko_dll}")
+            set_property(TARGET ${_executable} APPEND PROPERTY LINK_DEPENDS "${_mishchenko_dll}")
+            add_custom_command(TARGET ${_executable} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${_mishchenko_dll}" "$<TARGET_FILE_DIR:${_executable}>"
+                VERBATIM)
+        endif()
         foreach(_dll IN LISTS _runtime_dlls)
             if(_dll MATCHES "^libfftw")
                 set(_dll_source "${IFDDA_FFTW_ROOT}/${_dll}")

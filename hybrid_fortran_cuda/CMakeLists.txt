@@ -35,6 +35,9 @@ function(add_ifdda_hybrid_f90_cuda_variant precision)
     IFDDA_CUDA_CHAN_INITIAL_RESIDENT)
 
   add_library(${_leaf} STATIC ${_cuda_leaf})
+  if(TARGET ifdda_scattnlay)
+    ifdda_enable_scattnlay(${_leaf})
+  endif()
   target_include_directories(${_leaf} PUBLIC
     "${CMAKE_CURRENT_LIST_DIR}/../src"
     "${IF_DDA_ROOT}/cdmlib_C99" "${CUDAToolkit_INCLUDE_DIRS}")

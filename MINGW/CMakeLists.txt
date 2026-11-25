@@ -33,6 +33,7 @@ endif()
 # CUDA-aware Fortran ABI dispatchers. The RNG bridge is C++: with MinGW/g++ it
 # calls libgfortran's native random_seed/random_number ABI, preserving the
 # exact Fortran stream for CUDA stochastic paths.
+add_subdirectory("${IFDDA_CUDA_ROOT}/Scattnlay" Scattnlay EXCLUDE_FROM_ALL)
 set(IFDDA_CUDA_CPP_SOURCES
     "${IFDDA_CUDA_SOURCE_DIR}/random_bridge_c.cpp"
     "${IFDDA_CUDA_SOURCE_DIR}/cdmlib.cpp"
@@ -200,6 +201,7 @@ function(add_ifdda_cuda_variant precision)
     endif()
 
     add_library(${_library} STATIC ${IFDDA_CUDA_CPP_SOURCES})
+    ifdda_enable_scattnlay(${_library})
 
 
     target_include_directories(${_library} PUBLIC

@@ -1,5 +1,7 @@
 /* Active source mapping: CUDA/cdmlib.f90 lines 1-7253; historical translated blocks are checked against cdmlib/cdmlib.f90 before integration. */
 #include "cdmlib_cpp_precision.hpp"
+#include "tmatrix_reference.hpp"
+#include "scattnlay_reference.hpp"
 #include <vector>
 #define IFDDA_CUDA_CDMLIB_HOST_ABI
 #include "cuda_interfaces.h"
@@ -3583,6 +3585,27 @@ cdmlib_after_solver_dispatch:
             printf(" Cext (DDA)  = %26.16E m2\n",(REAL)*cext);
             printf(" Csca (DDA)  = %26.16E m2\n",(REAL)*csca);
             printf(" Cabs = %26.16E m2\n",(REAL)*cabs_out);
+            const bool ellipsoid=object_len>=9 && memcmp(object,"ellipsoid",9)==0;
+            const bool cylinder=object_len>=8 && memcmp(object,"cylinder",8)==0;
+            const bool concentric=object_len>=16 && memcmp(object,"concentricsphere",16)==0;
+            const bool plane_wave=(beam_len>=11 && memcmp(beam,"pwavelinear",11)==0) ||
+                                  (beam_len>=13 && memcmp(beam,"pwavecircular",13)==0);
+            if(plane_wave && init.nabc==0 &&
+               cfg.testgreen==0 && !reread_local_fields && *nbsphere>0 &&
+               trope_len>=3 && memcmp(trope,"iso",3)==0) {
+                if (concentric) {
+                    ifdda_report_scattnlay_(&init.numberobjet,rayonmulti,epsmulti,
+                        &init.lambda,cext,csca,cabs_out);
+                } else if (ellipsoid || cylinder) {
+                    const int shape = cylinder ? -2 : -1;
+                    const REAL dimensions[3] = {cylinder ? init.rayon : *demiaxea,
+                                                cylinder ? *hauteur : *demiaxeb,
+                                                cylinder ? REAL(0) : *demiaxec};
+                    const REAL rotation[3] = {*phiobj,*thetaobj,*psiobj};
+                    ifdda_report_tmatrix_(&shape,dimensions,rotation,&init.lambda,&init.eps,
+                        theta,phi,static_cast<const COMPLEX*>(ff0),cext,csca,cabs_out);
+                }
+            }
         }
     };
     cdmlib_post_cross_sections_c99();

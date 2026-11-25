@@ -54,9 +54,10 @@ subroutine cdmlib( &
      )
   use, intrinsic :: ISO_FORTRAN_ENV
   use, intrinsic :: ieee_arithmetic, only: ieee_is_finite
+  use, intrinsic :: iso_c_binding, only: c_int
   use precision
 #ifdef IFDDA_CUDA_INVERSE_DRIVER
-  use, intrinsic :: iso_c_binding, only: c_int, c_char, c_float, c_double, &
+  use, intrinsic :: iso_c_binding, only: c_char, c_float, c_double, &
        c_float_complex, c_double_complex
 #endif
 #ifdef USE_HDF5
@@ -4954,6 +4955,23 @@ subroutine cdmlib( &
         colorw = 'red'
         call writecolor(writecol, colorw)
         write(*, *) ' '
+     else if (object(1:16) == 'concentricsphere' .and. nabc == 0 .and. nlecture == 0 .and. &
+          nbsphere > 0 .and. trope(1:3) == 'iso' .and. &
+          (beam(1:11) == 'pwavelinear' .or. beam(1:13) == 'pwavecircular')) then
+        flush(output_unit)
+        call ifdda_report_scattnlay(int(numberobjet,c_int), rayonmulti, epsmulti, lambda, Cext, Csca, Cabs)
+     else if ((object(1:9) == 'ellipsoid' .or. object(1:8) == 'cylinder') .and. &
+          nabc == 0 .and. nlecture == 0 .and. &
+          nbsphere > 0 .and. trope(1:3) == 'iso' .and. &
+          (beam(1:11) == 'pwavelinear' .or. beam(1:13) == 'pwavecircular')) then
+        flush(output_unit)
+        if (object(1:8) == 'cylinder') then
+           call ifdda_report_tmatrix(-2_c_int, [rayon, hauteur, zero], [phiobj, thetaobj, psiobj], &
+                lambda, eps, theta, phi, FF0(1:3), Cext, Csca, Cabs)
+        else
+           call ifdda_report_tmatrix(-1_c_int, [demiaxea, demiaxeb, demiaxec], [phiobj, thetaobj, psiobj], &
+                lambda, eps, theta, phi, FF0(1:3), Cext, Csca, Cabs)
+        end if
      end if
   end if
 

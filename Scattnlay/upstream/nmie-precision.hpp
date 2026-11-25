@@ -1,0 +1,390 @@
+#ifndef SRC_NMIE_PRECISION_H_
+#define SRC_NMIE_PRECISION_H_
+//**********************************************************************************//
+//    Copyright (C) 2009-2018  Ovidio Pena <ovidio@bytesfall.com> // Copyright
+//    (C) 2013-2018  Konstantin Ladutenko <kostyfisik@gmail.com>          //
+//                                                                                  //
+//    This file is part of scattnlay //
+//                                                                                  //
+//    This program is free software: you can redistribute it and/or modify // it
+//    under the terms of the GNU General Public License as published by // the
+//    Free Software Foundation, either version 3 of the License, or // (at your
+//    option) any later version.                                           //
+//                                                                                  //
+//    This program is distributed in the hope that it will be useful, // but
+//    WITHOUT ANY WARRANTY; without even the implied warranty of //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the // GNU
+//    General Public License for more details. //
+//                                                                                  //
+//    The only additional remark is that we expect that all publications //
+//    describing work using this software, or all commercial products // using
+//    it, cite at least one of the following references:                      //
+//    [1] O. Pena and U. Pal, "Scattering of electromagnetic radiation by //
+//        a multilayered sphere," Computer Physics Communications, // vol. 180,
+//        Nov. 2009, pp. 2348-2354.                                       //
+//    [2] K. Ladutenko, U. Pal, A. Rivera, and O. Pena-Rodriguez, "Mie //
+//        calculation of electromagnetic near-field for a multilayered //
+//        sphere," Computer Physics Communications, vol. 214, May 2017, // pp.
+//        225-230. //
+//                                                                                  //
+//    You should have received a copy of the GNU General Public License // along
+//    with this program.  If not, see <http://www.gnu.org/licenses/>.         //
+//**********************************************************************************//
+
+//**********************************************************************************//
+// This class implements the algorithm for a multilayered sphere described by:
+// //
+//    [1] W. Yang, "Improved recursive algorithm for light scattering by a //
+//        multilayered sphere,” Applied Optics, vol. 42, Mar. 2003, pp.
+//        1710-1720.  //
+//                                                                                  //
+// You can find the description of all the used equations in: //
+//    [2] O. Pena and U. Pal, "Scattering of electromagnetic radiation by //
+//        a multilayered sphere," Computer Physics Communications, // vol. 180,
+//        Nov. 2009, pp. 2348-2354.                                       //
+//                                                                                  //
+// Hereinafter all equations numbers refer to [2] //
+//**********************************************************************************//
+#include <array>
+#include <complex>
+#include <concepts>
+#include <type_traits>
+#include <vector>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+#ifdef WITH_HWY
+#include "hwy/highway.h"
+#include "hwy/contrib/math/math-inl.h"
+#endif
+
+#ifdef MULTI_PRECISION
+#include <boost/multiprecision/cpp_bin_float.hpp>
+#include <boost/multiprecision/number.hpp>
+#endif  // MULTI_PRECISION
+
+namespace nmie {
+
+  inline void setNumThreads(int n) {
+#ifdef _OPENMP
+    omp_set_num_threads(n);
+#else
+    (void)n;
+#endif
+  }
+
+#ifdef WITH_HWY
+namespace hn = hwy::HWY_NAMESPACE;
+#include "highway-engine.hpp"
+#endif
+
+#ifdef MULTI_PRECISION
+namespace nmm = boost::multiprecision;
+typedef nmm::number<nmm::cpp_bin_float<MULTI_PRECISION> > FloatType;
+#else
+namespace nmm = std;
+typedef double FloatType;
+// typedef float FloatType;
+#endif  // MULTI_PRECISION
+
+template <typename T>
+concept MathEngine = requires(typename T::RealV v, typename T::ComplexV z, typename T::MaskV m) {
+  typename T::RealV;
+  typename T::ComplexV;
+  typename T::MaskV;
+  { T::Lanes() } -> std::convertible_to<size_t>;
+  { T::sin(v) } -> std::same_as<typename T::RealV>;
+  { T::cos(v) } -> std::same_as<typename T::RealV>;
+  { T::abs(v) } -> std::same_as<typename T::RealV>;
+};
+
+template <typename T>
+struct ScalarEngine {
+  using RealV = T;
+  using ComplexV = std::complex<T>;
+  using MaskV = bool; // For scalar, masks are just booleans
+
+  template <typename U>
+  using Vector = std::vector<U>;
+
+  // Traits
+  static constexpr size_t Lanes() { return 1; }
+
+  // Memory Operations
+  static inline RealV set(T val) { return val; }
+  static inline T to_scalar(RealV v) { return v; }
+  static inline void store_interleaved(ComplexV z, std::complex<T>* ptr) { *ptr = z; }
+  static inline ComplexV load_interleaved(const std::complex<T>* ptr) { return *ptr; }
+
+  static inline void store(ComplexV z, std::complex<T>* ptr) { *ptr = z; }
+  static inline ComplexV load(const std::complex<T>* ptr) { return *ptr; }
+
+  static inline void store(RealV v, T* ptr) { *ptr = v; }
+  static inline RealV load(const T* ptr) { return *ptr; }
+
+  // Math Primitives (Using ADL to handle std:: vs nmm::)
+  static inline RealV abs(RealV v) { using std::abs; using nmm::abs; return abs(v); }
+  static inline RealV sin(RealV v) { using std::sin; using nmm::sin; return sin(v); }
+  static inline RealV cos(RealV v) { using std::cos; using nmm::cos; return cos(v); }
+  static inline RealV exp(RealV v) { using std::exp; using nmm::exp; return exp(v); }
+  static inline RealV sqrt(RealV v) { using std::sqrt; using nmm::sqrt; return sqrt(v); }
+  static inline RealV log(RealV v) { using std::log; using nmm::log; return log(v); }
+  static inline RealV tan(RealV v) { using std::tan; using nmm::tan; return tan(v); }
+  static inline RealV ceil(RealV v) { using std::ceil; using nmm::ceil; return ceil(v); }
+  static inline RealV floor(RealV v) { using std::floor; using nmm::floor; return floor(v); }
+  static inline RealV max(RealV a, RealV b) { using std::max; return max(a, b); }
+  static inline RealV pow(RealV b, RealV e) { using std::pow; using nmm::pow; return pow(b, e); }
+
+  static inline MaskV gt(RealV a, RealV b) { return a > b; }
+  static inline MaskV lt(RealV a, RealV b) { return a < b; }
+  static inline MaskV ge(RealV a, RealV b) { return a >= b; }
+  static inline MaskV le(RealV a, RealV b) { return a <= b; }
+  static inline MaskV eq(RealV a, RealV b) { return a == b; }
+  static inline MaskV neq(RealV a, RealV b) { return a != b; }
+  static inline MaskV lor(MaskV a, MaskV b) { return a || b; }
+  static inline MaskV land(MaskV a, MaskV b) { return a && b; }
+
+  static inline RealV select(MaskV mask, RealV a, RealV b) {
+    return mask ? a : b;
+  }
+  static inline ComplexV select(MaskV mask, ComplexV a, ComplexV b) {
+    return mask ? a : b;
+  }
+
+  static inline RealV add(RealV a, RealV b) { return a + b; }
+  static inline RealV sub(RealV a, RealV b) { return a - b; }
+  static inline RealV mul(RealV a, RealV b) { return a * b; }
+  static inline RealV div(RealV a, RealV b) { return a / b; }
+
+  static inline RealV sign(RealV v) { return (v > 0) ? 1 : -1; }
+
+  static inline ComplexV add(ComplexV a, ComplexV b) { return a + b; }
+  static inline ComplexV sub(ComplexV a, ComplexV b) { return a - b; }
+  static inline ComplexV mul(ComplexV a, ComplexV b) { return a * b; }
+  static inline ComplexV mul(ComplexV a, RealV b) { return a * b; }
+  static inline ComplexV mul(RealV a, ComplexV b) { return a * b; }
+  static inline ComplexV div(ComplexV a, ComplexV b) { return a / b; }
+  static inline ComplexV div(ComplexV a, RealV b) { return a / b; }
+
+  static inline RealV get_real(ComplexV z) { return z.real(); }
+  static inline RealV get_imag(ComplexV z) { return z.imag(); }
+  static inline ComplexV make_complex(RealV re, RealV im) { return ComplexV(re, im); }
+
+  static inline ComplexV log(ComplexV z) {
+    RealV re = z.real();
+    RealV im = z.imag();
+    using std::sqrt; using nmm::sqrt;
+    using std::atan2; using nmm::atan2;
+    using std::log; using nmm::log;
+    RealV r = sqrt(re * re + im * im);
+    RealV phi = atan2(im, re);
+    return ComplexV(log(r), phi);
+  }
+
+  static inline ComplexV sqrt(ComplexV z) {
+    RealV re = z.real();
+    RealV im = z.imag();
+    using std::sqrt; using nmm::sqrt;
+    RealV r = sqrt(re * re + im * im);
+    RealV u = sqrt((r + re) * T(0.5));
+    RealV v = sqrt((r - re) * T(0.5));
+    if (im < 0) v = -v;
+    return ComplexV(u, v);
+  }
+
+  static inline RealV reduce_max(RealV v) { return v; }
+};
+
+template <class T>
+T sin_t(T v) {
+  if (std::is_same<T, double>::value)
+    return static_cast<T>(std::sin(static_cast<double>(v)));
+  return static_cast<T>(nmm::sin(static_cast<FloatType>(v)));
+}
+template <class T>
+T cos_t(T v) {
+  if (std::is_same<T, double>::value)
+    return static_cast<T>(std::cos(static_cast<double>(v)));
+  return static_cast<T>(nmm::cos(static_cast<FloatType>(v)));
+}
+template <class T>
+T sqrt_t(T v) {
+  if (std::is_same<T, double>::value)
+    return static_cast<T>(std::sqrt(static_cast<double>(v)));
+  return static_cast<T>(nmm::sqrt(static_cast<FloatType>(v)));
+}
+
+template <typename ToFloatType, typename FromFloatType>
+std::vector<ToFloatType> ConvertVector(const std::vector<FromFloatType> x) {
+  std::vector<ToFloatType> new_x;
+  for (auto element : x) {
+    new_x.push_back(static_cast<ToFloatType>(element));
+  }
+  return new_x;
+}
+
+#ifdef WITH_HWY
+template <typename FloatType>
+using DefaultEngine = std::conditional_t<std::is_same_v<FloatType, double>, HighwayEngine<double>, ScalarEngine<FloatType>>;
+#else
+template <typename FloatType>
+using DefaultEngine = ScalarEngine<FloatType>;
+#endif
+
+template <typename FloatType, typename Engine>
+struct MieBuffers {
+  using ComplexV = typename Engine::ComplexV;
+  using VectorC = typename Engine::template Vector<std::complex<FloatType>>;
+
+  // Persistent buffers
+  VectorC D1, D3, D1_prev, D3_prev, Psi, Zeta, PsiZeta;
+  VectorC Q, Ha, Hb;
+
+  // Stateless buffers
+  VectorC an, bn;
+  VectorC aln, bln, cln, dln;
+
+  typename Engine::RealV Qext, Qsca, Qabs, Qbk, Qpr, g, albedo;
+
+  // Result storage
+  FloatType Qext_res, Qsca_res, Qabs_res, Qbk_res, Qpr_res, g_res, albedo_res;
+  std::array<char, 3> isConvergedE_res = {0, 0, 0};
+  std::array<char, 3> isConvergedH_res = {0, 0, 0};
+  std::vector<std::complex<FloatType>> S1_res, S2_res;
+
+  void resize(int nmax, int L, int theta_size) {
+    size_t lanes = Engine::Lanes();
+    size_t size = (nmax + 1) * lanes;
+    size_t total_size = size * (L + 1);
+
+    if (D1.size() < size)
+      D1.resize(size);
+    if (D3.size() < size)
+      D3.resize(size);
+    if (D1_prev.size() < size)
+      D1_prev.resize(size);
+    if (D3_prev.size() < size)
+      D3_prev.resize(size);
+    if (Psi.size() < size)
+      Psi.resize(size);
+    if (Zeta.size() < size)
+      Zeta.resize(size);
+    if (PsiZeta.size() < size)
+      PsiZeta.resize(size);
+
+    if (Q.size() < total_size) {
+      Q.resize(total_size);
+      Ha.resize(total_size);
+      Hb.resize(total_size);
+    }
+
+    if (an.size() < size) an.resize(size);
+    if (bn.size() < size) bn.resize(size);
+
+    if (aln.size() < total_size)
+      aln.resize(total_size);
+    if (bln.size() < total_size)
+      bln.resize(total_size);
+    if (cln.size() < total_size)
+      cln.resize(total_size);
+    if (dln.size() < total_size)
+      dln.resize(total_size);
+
+    if (S1_res.size() < static_cast<size_t>(theta_size))
+      S1_res.resize(theta_size);
+    if (S2_res.size() < static_cast<size_t>(theta_size))
+      S2_res.resize(theta_size);
+  }
+
+  void updateSize(int nmax, int L_in, int theta_size) {
+    size_t L = static_cast<size_t>(L_in);
+    size_t lanes = Engine::Lanes();
+    size_t size = (nmax + 1) * lanes;
+    size_t total_size = size * (L + 1);
+
+    if (D1.capacity() < size) D1.reserve(size);
+    if (D3.capacity() < size) D3.reserve(size);
+    if (D1_prev.capacity() < size) D1_prev.reserve(size);
+    if (D3_prev.capacity() < size) D3_prev.reserve(size);
+    if (Psi.capacity() < size) Psi.reserve(size);
+    if (Zeta.capacity() < size) Zeta.reserve(size);
+    if (PsiZeta.capacity() < size) PsiZeta.reserve(size);
+
+    if (Q.capacity() < total_size) {
+      Q.reserve(total_size);
+      Ha.reserve(total_size);
+      Hb.reserve(total_size);
+    }
+
+    if (an.capacity() < size) an.reserve(size);
+    if (bn.capacity() < size) bn.reserve(size);
+
+    if (aln.capacity() < total_size)
+      aln.reserve(total_size);
+    if (bln.capacity() < total_size)
+      bln.reserve(total_size);
+    if (cln.capacity() < total_size)
+      cln.reserve(total_size);
+    if (dln.capacity() < total_size)
+      dln.reserve(total_size);
+
+    if (aln.size() < total_size)
+      aln.resize(total_size);
+    if (bln.size() < total_size)
+      bln.resize(total_size);
+    if (cln.size() < total_size)
+      cln.resize(total_size);
+    if (dln.size() < total_size)
+      dln.resize(total_size);
+
+    if (S1_res.capacity() < static_cast<size_t>(theta_size))
+      S1_res.reserve(theta_size);
+    if (S2_res.capacity() < static_cast<size_t>(theta_size))
+      S2_res.reserve(theta_size);
+    if (S1_res.size() < static_cast<size_t>(theta_size))
+      S1_res.resize(theta_size);
+    if (S2_res.size() < static_cast<size_t>(theta_size))
+      S2_res.resize(theta_size);
+  }
+};
+
+template <typename ToFloatType, typename FromFloatType>
+std::complex<ToFloatType> ConvertComplex(std::complex<FromFloatType> z) {
+  return std::complex<ToFloatType>(static_cast<ToFloatType>(z.real()),
+                                   static_cast<ToFloatType>(z.imag()));
+}
+
+template <typename ToFloatType, typename FromFloatType>
+std::vector<std::complex<ToFloatType> > ConvertComplexVector(
+    std::vector<std::complex<FromFloatType> > x) {
+  std::vector<std::complex<ToFloatType> > new_x;
+  for (auto element : x) {
+    new_x.push_back(
+        std::complex<ToFloatType>(static_cast<ToFloatType>(element.real()),
+                                  static_cast<ToFloatType>(element.imag())));
+  }
+  return new_x;
+}
+
+template <typename ToFloatType, typename FromFloatType>
+std::vector<std::vector<std::complex<ToFloatType> > >
+ConvertComplexVectorVector(
+    std::vector<std::vector<std::complex<FromFloatType> > > x) {
+  std::vector<std::vector<std::complex<ToFloatType> > > new_x;
+  std::vector<std::complex<ToFloatType> > new_y;
+  for (auto y : x) {
+    new_y.clear();
+    for (auto element : y) {
+      new_y.push_back(
+          std::complex<ToFloatType>(static_cast<ToFloatType>(element.real()),
+                                    static_cast<ToFloatType>(element.imag())));
+    }
+    new_x.push_back(new_y);
+  }
+  return new_x;
+}
+
+}  // end of namespace nmie
+#endif  // SRC_NMIE_PRECISION_H_

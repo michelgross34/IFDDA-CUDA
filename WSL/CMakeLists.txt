@@ -62,6 +62,50 @@ option(IFDDA_CUDA_CHAN_INITIAL_RESIDENT
 find_package(CUDAToolkit REQUIRED)
 find_package(OpenMP REQUIRED COMPONENTS CXX Fortran)
 
+add_subdirectory("${IFDDA_CUDA_ROOT}/Scattnlay" Scattnlay EXCLUDE_FROM_ALL)
+set(_mishchenko_dir "${IFDDA_CUDA_ROOT}/Mishchenko")
+set(_mishchenko_nasa "${_mishchenko_dir}/NASA")
+set(_mishchenko_sources
+    "${_mishchenko_nasa}/ampld.lp.f"
+    "${_mishchenko_nasa}/ampld.par.f"
+    "${_mishchenko_nasa}/lpd.f")
+set(_mishchenko_default ON)
+foreach(_source IN LISTS _mishchenko_sources)
+    if(NOT EXISTS "${_source}")
+        set(_mishchenko_default OFF)
+    endif()
+endforeach()
+option(IFDDA_WSL_TMATRIX "Build the native Mishchenko T-matrix reference" ${_mishchenko_default})
+if(IFDDA_WSL_TMATRIX)
+    foreach(_source IN LISTS _mishchenko_sources)
+        if(NOT EXISTS "${_source}")
+            message(FATAL_ERROR "Missing Mishchenko source: ${_source}")
+        endif()
+    endforeach()
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    set(_mishchenko_generated "${CMAKE_CURRENT_BINARY_DIR}/mishchenko_generated")
+    set(_mishchenko_core "${_mishchenko_generated}/mish_core.f" "${_mishchenko_generated}/lpd.f")
+    add_custom_command(
+        OUTPUT ${_mishchenko_core}
+        COMMAND Python3::Interpreter "${_mishchenko_dir}/prepare_core.py"
+            --output-dir "${_mishchenko_generated}"
+        DEPENDS "${_mishchenko_dir}/prepare_core.py" ${_mishchenko_sources}
+        VERBATIM)
+    add_library(ifdda_mishchenko SHARED ${_mishchenko_core}
+        "${_mishchenko_dir}/mishchenko_reference.f90")
+    target_include_directories(ifdda_mishchenko PRIVATE "${_mishchenko_nasa}")
+    target_compile_options(ifdda_mishchenko PRIVATE
+        $<$<Fortran_COMPILER_ID:GNU>:-std=legacy>
+        $<$<Fortran_COMPILER_ID:GNU>:-fallow-argument-mismatch>)
+endif()
+
+function(ifdda_wsl_enable_tmatrix target)
+    if(IFDDA_WSL_TMATRIX)
+        target_compile_definitions(${target} PRIVATE IFDDA_LINK_MISHCHENKO)
+        target_link_libraries(${target} PUBLIC ifdda_mishchenko)
+    endif()
+endfunction()
+
 # Keep this list aligned with CUDA/CMakeLists.txt. In the hybrid build,
 # cdmlib.cpp is excluded: CUDA/cdmlib.f90 supplies the same entry point.
 set(IFDDA_CUDA_CPP_SOURCES
@@ -230,6 +274,9 @@ foreach(_precision IN ITEMS double float)
             CUDA::cudart CUDA::cufft CUDA::cublas
             OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran)
 
+        ifdda_enable_scattnlay(ifdda_cdmlib_f90_cuda_${_precision})
+        ifdda_wsl_enable_tmatrix(ifdda_cdmlib_f90_cuda_${_precision})
+
         set(_main_f90_cdmlib_f90_exe "test_main_f90_cdmlib_f90_cuda_${_precision}")
         add_executable(${_main_f90_cdmlib_f90_exe} "${IFDDA_CUDA_SOURCE_DIR}/main0.f90")
         set_target_properties(${_main_f90_cdmlib_f90_exe} PROPERTIES Fortran_PREPROCESS ON)
@@ -266,6 +313,9 @@ foreach(_precision IN ITEMS double float)
             $<$<AND:$<CONFIG:RelWithDebInfo>,$<COMPILE_LANGUAGE:CUDA>>:-lineinfo>)
         target_link_libraries(ifdda_cdmlib_cpp_cuda_${_precision} PUBLIC
             CUDA::cudart CUDA::cufft CUDA::cublas OpenMP::OpenMP_CXX)
+
+        ifdda_enable_scattnlay(ifdda_cdmlib_cpp_cuda_${_precision})
+        ifdda_wsl_enable_tmatrix(ifdda_cdmlib_cpp_cuda_${_precision})
 
         set(_fortran_cpp_exe "test_main0_f90_cdmlib_cpp_cuda_${_precision}")
         add_executable(${_fortran_cpp_exe}

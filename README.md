@@ -4,6 +4,11 @@ IFDDA-CUDA est un portage sur GPU CUDA du programme IFDDA. Le dépôt rassemble 
 
 Les exécutables acceptent des options en ligne de commande. La liste des options, leurs valeurs et des exemples sont décrits dans [`doc/OPTIONS_LIGNE_DE_COMMANDE.md`](doc/OPTIONS_LIGNE_DE_COMMANDE.md).
 
+Deux modules fournissent des sections efficaces de référence pour la comparaison DDA.
+
+- [Scattnlay](Scattnlay/SCATTNLAY_GUIDE.md) calcule les sections de Mie pour les sphères concentriques. Le guide décrit les exécutables et bibliothèques autonomes sous WSL, MSVC et MinGW.
+- [Mishchenko](Mishchenko/README.md) calcule les sections T-matrix pour les sphéroïdes et cylindres circulaires finis. Le guide indique comment installer les trois fichiers NASA requis localement et compiler les binaires.
+
 ## Prérequis généraux
 
 - Un compilateur et un environnement CMake adaptés à la plateforme.
