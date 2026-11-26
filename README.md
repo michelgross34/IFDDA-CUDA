@@ -7,12 +7,12 @@ Les exécutables acceptent des options en ligne de commande. La liste des option
 Deux modules fournissent des sections efficaces de référence pour la comparaison DDA.
 
 - [Scattnlay](Scattnlay/SCATTNLAY_GUIDE.md) calcule les sections de Mie pour les sphères concentriques. Le guide décrit les exécutables et bibliothèques autonomes sous WSL, MSVC et MinGW.
-- [Mishchenko](Mishchenko/README.md) calcule les sections T-matrix pour les sphéroïdes et cylindres circulaires finis. Le guide indique comment installer les trois fichiers NASA requis localement et compiler les binaires.
+- [Mishchenko](Mishchenko/README.md) calcule les sections T-matrix pour les sphéroïdes et cylindres circulaires finis. Le guide décrit les trois exécutables autonomes (CPU, CPU + OpenMP, GPU + OpenMP). La référence intégrée à IF-DDA utilise exclusivement OpenMP + CUDA FP64 lorsque les sources NASA sont disponibles. Les options CMake IFDDA_WSL_TMATRIX et IFDDA_WINDOWS_TMATRIX activent cette référence.
 
 ## Prérequis généraux
 
 - Un compilateur et un environnement CMake adaptés à la plateforme.
-- Le toolkit NVIDIA CUDA. Les projets Windows demandent CUDA Toolkit 11.8.x.
+- Le toolkit NVIDIA CUDA. Les wrappers DDA Windows demandent CUDA Toolkit 11.8.x ; le module Mishchenko accéléré utilise CUDA 12.9 par défaut.
 - Pour **Linux/WSL**, le dépôt est autonome : les en-têtes C99 nécessaires sont
   inclus dans `src/` ; le projet ne dépend pas d'un répertoire frère
   `cdmlib_C99`. Les variantes Windows MinGW/MSVC peuvent demander des
@@ -52,6 +52,8 @@ build_all_cuda.bat
 ```
 
 Cette étape compile séparément les wrappers CUDA avec le compilateur CUDA Windows et crée les DLL ainsi que les bibliothèques d'import float et double dans `src/`. La compilation CMake de MinGW ou MSVC utilise ces fichiers : elle ne remplace pas cette étape. CUDA Toolkit 11.8.x et `nvcc` doivent être installés et accessibles.
+
+Avec les trois fichiers NASA disponibles, le script construit aussi la bibliothèque de référence Mishchenko OpenMP + CUDA FP64. CMake déploie automatiquement les trois DLL de ce module. Le toolkit CUDA 12.9 est utilisé par défaut pour ce noyau distinct.
 
 ## Windows avec MinGW
 

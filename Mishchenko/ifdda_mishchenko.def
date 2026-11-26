@@ -1,3 +1,4 @@
 LIBRARY ifdda_mishchenko.dll
 EXPORTS
     ifdda_mishchenko_v1
+    ifdda_mishchenko_backend

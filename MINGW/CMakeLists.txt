@@ -352,3 +352,10 @@ foreach(_precision IN ITEMS double float)
     add_dependencies(test_main0_f90_cdmlib_f90_cuda_${_precision}
         test_main0_cpp_cdmlib_cpp_cuda_${_precision})
 endforeach()
+
+# Build and deploy the accelerated Mishchenko reference alongside all IF-DDA executables.
+include("${CMAKE_CURRENT_LIST_DIR}/../Mishchenko/IFDDAIntegration.cmake")
+ifdda_configure_mishchenko(IFDDA_WINDOWS_TMATRIX)
+if(IFDDA_WINDOWS_TMATRIX)
+    ifdda_attach_windows_references("${CMAKE_CURRENT_SOURCE_DIR}")
+endif()

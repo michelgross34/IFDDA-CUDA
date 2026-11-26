@@ -82,14 +82,28 @@ echo "[IFDDA] Sources CUDA : ${SOURCE_DIR}"
 echo "[IFDDA] Build         : ${BUILD_DIR}"
 echo "[IFDDA] Mode=${BUILD_TYPE}, CUDA SM=${CUDA_ARCH}, jobs=${JOBS}"
 
+export PATH="/usr/local/cuda/bin:$PATH"
+cmake_options=()
+if [[ -n "${IFDDA_WSL_TMATRIX:-}" ]]; then
+    cmake_options+=("-DIFDDA_WSL_TMATRIX=${IFDDA_WSL_TMATRIX}")
+elif [[ -f "${CUDA_ROOT}/Mishchenko/NASA/ampld.lp.f" &&
+        -f "${CUDA_ROOT}/Mishchenko/NASA/ampld.par.f" &&
+        -f "${CUDA_ROOT}/Mishchenko/NASA/lpd.f" ]]; then
+    cmake_options+=("-DIFDDA_WSL_TMATRIX=ON")
+fi
+
 # Les trois familles demandees : main0.cpp + cdmlib.cpp,
 # main0.f90 + cdmlib.cpp, puis main0.f90 + cdmlib.f90, en deux precisions.
 cmake -S "${SCRIPT_DIR}" -B "${BUILD_DIR}" -G Ninja \
     -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
     -DCMAKE_CUDA_ARCHITECTURES="${CUDA_ARCH}" \
-    -DIFDDA_CUDA_CHAN_INITIAL_RESIDENT=ON
+    -DIFDDA_CUDA_CHAN_INITIAL_RESIDENT=ON "${cmake_options[@]}"
 
 cmake --build "${BUILD_DIR}" --parallel "${JOBS}"
 
 echo "[IFDDA] Compilation terminee. Executables dans ${BUILD_DIR} :"
 find "${BUILD_DIR}" -maxdepth 1 -type f -name 'test_*' -executable -printf '  %f\n' | sort
+if [[ -f "${BUILD_DIR}/libifdda_mishchenko.so" ]] &&
+    grep -qx 'IFDDA_WSL_TMATRIX:BOOL=ON' "${BUILD_DIR}/CMakeCache.txt"; then
+    echo "[IFDDA] Reference T-matrix OpenMP + CUDA FP64 : ${BUILD_DIR}/libifdda_mishchenko.so"
+fi

@@ -10,9 +10,9 @@ endif()
 # CLion: select the WSL toolchain, then open CUDA/WSL as a CMake project.
 # Unlike CUDA/MINGW, this builds kernel.cu with Linux nvcc and never imports
 # precompiled Windows DLLs or links FFTW into the CUDA targets.
-if(NOT DEFINED CMAKE_CUDA_COMPILER AND EXISTS "/usr/local/cuda/bin/nvcc")
+if(NOT CMAKE_CUDA_COMPILER AND "$ENV{CUDACXX}" STREQUAL "" AND EXISTS "/usr/local/cuda/bin/nvcc")
     set(CMAKE_CUDA_COMPILER "/usr/local/cuda/bin/nvcc" CACHE FILEPATH
-        "CUDA compiler inside WSL")
+        "CUDA compiler inside WSL" FORCE)
 endif()
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
     set(CMAKE_CUDA_ARCHITECTURES "70" CACHE STRING
@@ -63,46 +63,11 @@ find_package(CUDAToolkit REQUIRED)
 find_package(OpenMP REQUIRED COMPONENTS CXX Fortran)
 
 add_subdirectory("${IFDDA_CUDA_ROOT}/Scattnlay" Scattnlay EXCLUDE_FROM_ALL)
-set(_mishchenko_dir "${IFDDA_CUDA_ROOT}/Mishchenko")
-set(_mishchenko_nasa "${_mishchenko_dir}/NASA")
-set(_mishchenko_sources
-    "${_mishchenko_nasa}/ampld.lp.f"
-    "${_mishchenko_nasa}/ampld.par.f"
-    "${_mishchenko_nasa}/lpd.f")
-set(_mishchenko_default ON)
-foreach(_source IN LISTS _mishchenko_sources)
-    if(NOT EXISTS "${_source}")
-        set(_mishchenko_default OFF)
-    endif()
-endforeach()
-option(IFDDA_WSL_TMATRIX "Build the native Mishchenko T-matrix reference" ${_mishchenko_default})
-if(IFDDA_WSL_TMATRIX)
-    foreach(_source IN LISTS _mishchenko_sources)
-        if(NOT EXISTS "${_source}")
-            message(FATAL_ERROR "Missing Mishchenko source: ${_source}")
-        endif()
-    endforeach()
-    find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    set(_mishchenko_generated "${CMAKE_CURRENT_BINARY_DIR}/mishchenko_generated")
-    set(_mishchenko_core "${_mishchenko_generated}/mish_core.f" "${_mishchenko_generated}/lpd.f")
-    add_custom_command(
-        OUTPUT ${_mishchenko_core}
-        COMMAND Python3::Interpreter "${_mishchenko_dir}/prepare_core.py"
-            --output-dir "${_mishchenko_generated}"
-        DEPENDS "${_mishchenko_dir}/prepare_core.py" ${_mishchenko_sources}
-        VERBATIM)
-    add_library(ifdda_mishchenko SHARED ${_mishchenko_core}
-        "${_mishchenko_dir}/mishchenko_reference.f90")
-    target_include_directories(ifdda_mishchenko PRIVATE "${_mishchenko_nasa}")
-    target_compile_options(ifdda_mishchenko PRIVATE
-        $<$<Fortran_COMPILER_ID:GNU>:-std=legacy>
-        $<$<Fortran_COMPILER_ID:GNU>:-fallow-argument-mismatch>)
-endif()
-
+include("${IFDDA_CUDA_ROOT}/Mishchenko/IFDDAIntegration.cmake")
+ifdda_configure_mishchenko(IFDDA_WSL_TMATRIX)
 function(ifdda_wsl_enable_tmatrix target)
     if(IFDDA_WSL_TMATRIX)
-        target_compile_definitions(${target} PRIVATE IFDDA_LINK_MISHCHENKO)
-        target_link_libraries(${target} PUBLIC ifdda_mishchenko)
+        ifdda_mishchenko_attach(${target})
     endif()
 endfunction()
 

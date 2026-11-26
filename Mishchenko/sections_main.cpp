@@ -17,6 +17,7 @@ void usage(std::ostream& output) {
            << "  ifdda_mishchenko_sections spheroid wavelength_nm transverse_nm axial_nm mr mi theta_deg\n"
            << "  ifdda_mishchenko_sections ellipsoid wavelength_nm a_nm b_nm c_nm mr mi theta_deg\n"
            << "  ifdda_mishchenko_sections cylinder wavelength_nm radius_nm height_nm mr mi theta_deg\n"
+           << "  ifdda_mishchenko_sections capsule wavelength_nm radius_nm straight_length_nm mr mi theta_deg\n"
            << "  Append [Ep_re Ep_im Es_re Es_im] to specify polarization.\n"
            << "  Without arguments, run spheroid 630 140 280 1.5 0.02 27 with E_theta polarization.\n";
 }
@@ -44,6 +45,11 @@ struct Geometry {
 
 Geometry geometry(std::string_view shape, const char* const* dimensions) {
     const double a = length(dimensions[0]);
+    if (shape == "capsule") {
+        const double straight = number(dimensions[1]);
+        if (straight < 0) throw std::invalid_argument("capsule straight length must be nonnegative");
+        return {IFDDA_MISHCHENKO_CAPSULE, a, straight / 2};
+    }
     const double b = length(dimensions[1]);
     if (shape == "cylinder") return {IFDDA_MISHCHENKO_CYLINDER, a, b / 2};
     if (shape == "spheroid") return {IFDDA_MISHCHENKO_SPHEROID, a, b};
@@ -72,7 +78,7 @@ int main(int argc, char** argv) {
     }
     const std::string_view shape = argc >= 2 ? arguments[1] : "";
     const int required = shape == "ellipsoid" ? 9 : 8;
-    if ((shape != "spheroid" && shape != "ellipsoid" && shape != "cylinder") ||
+    if ((shape != "spheroid" && shape != "ellipsoid" && shape != "cylinder" && shape != "capsule") ||
         (argc != required && argc != required + 4)) {
         usage(std::cerr);
         return IFDDA_MISHCHENKO_INVALID_INPUT;
@@ -89,8 +95,12 @@ int main(int argc, char** argv) {
         const double transverse = object.transverse / wavelength;
         const double axial = object.axial / wavelength;
         const bool cylinder = object.shape == IFDDA_MISHCHENKO_CYLINDER;
-        const double volume_radius = std::cbrt((cylinder ? 1.5 : 1.0) * transverse * transverse * axial);
-        const double longest = cylinder ? std::hypot(transverse, axial) : std::max(transverse, axial);
+        const bool capsule = object.shape == IFDDA_MISHCHENKO_CAPSULE;
+        const double volume_axis = capsule ? transverse + 1.5 * axial : (cylinder ? 1.5 * axial : axial);
+        const double volume_radius = std::cbrt(transverse * transverse * volume_axis);
+        const double longest = capsule ? transverse + axial :
+            (cylinder ? std::hypot(transverse, axial) : std::max(transverse, axial));
+        const double ratio = capsule ? axial / transverse : transverse / axial;
         const double mr = number(arguments[required - 3]);
         const double mi = number(arguments[required - 2]);
         const double theta = number(arguments[required - 1]);
@@ -103,12 +113,13 @@ int main(int argc, char** argv) {
         }
         double sections[3], variation;
         int order, quadrature;
-        const int status = ifdda_mishchenko_v1(object.shape, volume_radius, transverse / axial,
+        const int status = ifdda_mishchenko_v1(object.shape, volume_radius, ratio,
             longest, mr, mi, theta, polarization[0], polarization[1], polarization[2],
             polarization[3], sections, &order, &quadrature, &variation);
         if (status != IFDDA_MISHCHENKO_OK) {
             std::cerr << "Mishchenko: "
-                      << (status == IFDDA_MISHCHENKO_NO_CONVERGENCE
+                      << (status == IFDDA_MISHCHENKO_CUDA_ERROR ? "CUDA backend error\n" :
+                          status == IFDDA_MISHCHENKO_NO_CONVERGENCE
                           ? "cross sections did not converge\n" : "invalid or unsupported input\n");
             return status;
         }
@@ -117,7 +128,8 @@ int main(int argc, char** argv) {
                   << "Csca (T-matrix) = " << sections[1] * area << " m2\n"
                   << "Cabs (T-matrix) = " << sections[2] * area << " m2\n"
                   << "Order = " << order << ", surface quadrature = " << quadrature
-                  << ", relative variation = " << variation << '\n';
+                  << ", relative variation = " << variation << '\n'
+                  << "Backend = " << ifdda_mishchenko_backend() << '\n';
     } catch (const std::exception& error) {
         std::cerr << "Mishchenko: " << error.what() << '\n';
         return IFDDA_MISHCHENKO_INVALID_INPUT;

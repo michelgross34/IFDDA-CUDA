@@ -1,63 +1,69 @@
 # Mishchenko T-matrix for IF-DDA
 
-The NASA GISS fixed-orientation solver computes extinction, scattering, and absorption in double precision for homogeneous, isotropic, nonmagnetic particles in vacuum under plane-wave illumination. It supports spheroids (ellipsoids of revolution, including the sphere limit) and finite circular cylinders. Triaxial ellipsoids require a different solver, such as the DDA in IF-DDA.
+The NASA GISS fixed-orientation solver computes extinction, scattering, and absorption in double precision for homogeneous, isotropic, nonmagnetic particles in vacuum under plane-wave illumination. The standalone executable and shared library support spheroids (ellipsoids of revolution), finite circular cylinders, and capsules with hemispherical caps. Triaxial ellipsoids require a different solver, such as the DDA in IF-DDA.
 
-## Build the shared library and standalone executable
+## Execution backends
 
-Obtain the fixed-orientation double-precision sources from the [NASA GISS T-matrix page](https://www.giss.nasa.gov/staff/mmishchenko/tmatrix/) and place `ampld.lp.f`, `ampld.par.f`, and `lpd.f` in `Mishchenko/NASA/` before building. Follow the conditions in the NASA source headers. A fresh clone contains the IF-DDA wrapper and build scripts. The standalone build requires the three local NASA files. The IF-DDA WSL build defaults to T-matrix support when these files are present.
+| Standalone executable (add .exe on Windows) | Backend ID | Algorithm |
+| --- | ---: | --- |
+| ifdda_mishchenko_sections_cpu | 0 | Serial double-precision Fortran |
+| ifdda_mishchenko_sections_openmp | 1 | OpenMP double-precision Fortran |
+| ifdda_mishchenko_sections_cuda | 2 | OpenMP T-matrix construction and CUDA FP64 angular integration |
 
-Run these commands from `E:\msna6\test_chat_on_steroid\if-dda-master\CUDA\Mishchenko`, or `/mnt/e/msna6/test_chat_on_steroid/if-dda-master/CUDA/Mishchenko` under WSL. Requirements are CMake 3.20 or later, Python 3, GNU Fortran, and a C++17 compiler. The build runs `prepare_core.py` to adapt the sources in `NASA` and preserve double precision in the solver and its amplitude tables.
+The three versions use the same NASA fixed-orientation double-precision solver, geometries, convergence criteria and C interface. OpenMP distributes independent surface-integral terms in TMATR0 and TMATR, preserving the summation order within each term. Matrix factorization remains on the CPU. The CUDA backend contracts incident multipoles once per refinement on the CPU and evaluates the outgoing amplitudes in parallel on the GPU; the cost per direction is reduced from O(N^3) to O(N^2). The forward amplitude and the full-sphere scattering quadrature use double precision, with the original quadrature weights and deterministic host summation. The implementation is adapted from [TMatrix-Holo](https://github.com/michelgross34/TMatrix-Holo). Neither FFT nor quadruple precision is required here.
 
-| Build script | Release directory | Shared library | Executable |
-| --- | --- | --- | --- |
-| `WSL/build_all.sh` or `WSL/build_all.bat` | `WSL/build` | `libifdda_mishchenko.so` | `ifdda_mishchenko_sections` |
-| `MSVC/build_all.bat` | `MSVC/build` | `ifdda_mishchenko.dll` | `ifdda_mishchenko_sections.exe` |
-| `MINGW/build_all.bat` | `MINGW/build` | `ifdda_mishchenko.dll` | `ifdda_mishchenko_sections.exe` |
+Set OMP_NUM_THREADS to control the OpenMP worker count. When it is not set, the library uses up to eight workers and restores the caller's OpenMP thread-count setting on return. CUDA initialization and transfers can dominate very small calculations.
 
-Each script configures its local `CMakeLists.txt`, builds both Release targets, and places the two binaries side by side at the top of that environment's `build` directory. The Windows scripts also place their import libraries there.
+## Build the libraries and standalone executables
+
+Obtain the original NASA fixed-orientation files ampld.lp.f, ampld.par.f and lpd.f and place them in NASA/. They are external dependencies, not distributed in this repository. Requirements: CMake 3.20 or later, Python 3, GNU Fortran with OpenMP, C++17 and NVIDIA CUDA for the GPU variant. The build prepares private copies of the original sources; it never edits the NASA files.
+
+| Build script | Release output directory |
+| --- | --- |
+| WSL/build_all.sh (or WSL/build_all.bat from Windows) | WSL/build |
+| MSVC/build_all.bat | MSVC/build |
+| MINGW/build_all.bat | MINGW/build |
+
+Each script builds all three standalone executables and their shared libraries and runs the numerical backend tests. Windows builds include the corresponding import libraries.
 
 ### WSL
 
-```bash
+~~~bash
 bash WSL/build_all.sh
-```
+~~~
 
-Set `IFDDA_MISHCHENKO_BUILD_DIR` to choose a different build directory. To start this build from Windows PowerShell, run the WSL batch launcher.
+Set IFDDA_MISHCHENKO_BUILD_DIR to select the output directory. Set CMAKE_CUDA_ARCHITECTURES using the script's additional CMake arguments for another GPU architecture. The default is SM 70 (Volta), supported by CUDA 12.9. The shared libraries are libifdda_mishchenko_cpu.so, libifdda_mishchenko_openmp.so and libifdda_mishchenko.so (the accelerated library).
 
-```powershell
-.\WSL\build_all.bat
-```
+### Windows
 
-### Windows with MSVC 2019 x64
-
-From PowerShell, run the MSVC batch script. Visual Studio builds the C++ executable and the import library `ifdda_mishchenko.lib`. GNU Fortran for MinGW-w64 builds the x64 DLL. Set `IFDDA_MISHCHENKO_GFORTRAN` to select a compiler other than `F:/mingw64_11.2/bin/gfortran.exe`.
-
-```powershell
+~~~powershell
 .\MSVC\build_all.bat
-```
-
-### Windows with MinGW-w64 x64
-
-Run the MinGW batch script from PowerShell with Ninja on `PATH`. Set `IFDDA_MISHCHENKO_MINGW_BIN` if the compiler binaries are installed outside `F:\mingw64_11.2\bin`. The MinGW import library is `libifdda_mishchenko.dll.a`.
-
-```powershell
 .\MINGW\build_all.bat
-```
+~~~
 
-In CLion, open the `WSL`, `MSVC`, or `MINGW` subdirectory and select its matching toolchain. For a single artifact, pass only its target to `--target`. Keep the Windows DLL and executable together. The Windows DLLs link the GNU Fortran runtime statically.
+Run the script appropriate to the C++ toolchain. MSVC 2019 x64 or MinGW-w64 x64 builds the standalone C++ programs; GNU Fortran builds the Fortran libraries. The GPU kernel is compiled separately with nvcc and an x64 MSVC host compiler, using CUDA 12.9 by default. The GNU Fortran and OpenMP runtimes are statically linked into the reference DLL. Set IFDDA_MISHCHENKO_GFORTRAN, IFDDA_MISHCHENKO_MINGW_BIN, IFDDA_MISHCHENKO_CUDA_ROOT and IFDDA_MISHCHENKO_VCVARS64 as appropriate for the installed tools. Ninja is required by the MinGW script. The default Windows kernel architecture is SM 70.
+
+The serial and OpenMP DLLs are ifdda_mishchenko_cpu.dll and ifdda_mishchenko_openmp.dll. The accelerated variant requires these three runtime files together: ifdda_mishchenko.dll, ifdda_mishchenko_cuda_kernel.dll and cudart64_12.dll. Import libraries use .lib for MSVC and .dll.a for MinGW.
+
+### CMake and CLion
+
+Open the WSL, MSVC or MINGW subdirectory with its matching toolchain. Build All creates the three executables. In an IDE build the binaries are in the mishchenko subdirectory (Windows: mishchenko/<configuration>); the build_all scripts additionally copy the Release binaries to their build directory. Select Release for numerical performance measurements.
+
+IFDDA_MISHCHENKO_ENABLE_CUDA=OFF builds the serial and OpenMP standalone variants without the CUDA toolkit. IFDDA_MISHCHENKO_BUILD_STANDALONE=OFF builds only the accelerated library and is used by the parent IF-DDA projects.
 
 ## Calculate cross sections with the standalone executable
 
-Run the executable without arguments to calculate the reference prolate spheroid. This is equivalent to `spheroid 630 140 280 1.5 0.02 27` with Eθ polarization. In CLion, leave **Program arguments** empty to run this case.
+All three executables accept identical arguments; the following examples use the CUDA variant. Run the executable without arguments to calculate the reference prolate spheroid. This is equivalent to `spheroid 630 140 280 1.5 0.02 27` with Eθ polarization. In CLion, leave **Program arguments** empty to run this case.
 
 ```text
-ifdda_mishchenko_sections
-ifdda_mishchenko_sections spheroid wavelength_nm transverse_nm axial_nm mr mi theta_deg
-ifdda_mishchenko_sections ellipsoid wavelength_nm a_nm b_nm c_nm mr mi theta_deg
-ifdda_mishchenko_sections cylinder wavelength_nm radius_nm height_nm mr mi theta_deg
+ifdda_mishchenko_sections_cuda
+ifdda_mishchenko_sections_cuda spheroid wavelength_nm transverse_nm axial_nm mr mi theta_deg
+ifdda_mishchenko_sections_cuda ellipsoid wavelength_nm a_nm b_nm c_nm mr mi theta_deg
+ifdda_mishchenko_sections_cuda cylinder wavelength_nm radius_nm height_nm mr mi theta_deg
+ifdda_mishchenko_sections_cuda capsule wavelength_nm radius_nm straight_length_nm mr mi theta_deg
 ```
 
-Use positive lengths in **nanometres**. The relative refractive index is `mr + i mi`, with `mr > 0` and `mi >= 0`. The incidence angle `theta_deg` is measured from the symmetry axis to the incoming wave vector, from 0 to 180 degrees.
+Use **nanometres** for all lengths. The capsule straight length may be zero, which gives a sphere. All other lengths must be positive. The relative refractive index is `mr + i mi`, with `mr > 0` and `mi >= 0`. The incidence angle `theta_deg` is measured from the symmetry axis to the incoming wave vector, from 0 to 180 degrees.
 
 Append `Ep_re Ep_im Es_re Es_im` to specify the incident polarization. `Ep` is the Eθ component in the incidence plane and `Es` is the Eφ component perpendicular to it. The solver normalizes the two components. The default is `1 0 0 0` for Eθ. Use `0 0 1 0` for Eφ and `1 0 0 1` for equal components in quadrature. Use `--help` to display the command syntax.
 
@@ -68,8 +74,8 @@ Enter the three **semiaxes** with `ellipsoid`. At least two must be equal. Their
 These commands describe the same prolate spheroid.
 
 ```bash
-./WSL/build/ifdda_mishchenko_sections ellipsoid 630 140 140 280 1.5 0.02 27
-./WSL/build/ifdda_mishchenko_sections spheroid 630 140 280 1.5 0.02 27
+./WSL/build/ifdda_mishchenko_sections_cuda ellipsoid 630 140 140 280 1.5 0.02 27
+./WSL/build/ifdda_mishchenko_sections_cuda spheroid 630 140 280 1.5 0.02 27
 ```
 
 ### Finite circular cylinder
@@ -77,16 +83,26 @@ These commands describe the same prolate spheroid.
 Give the base **radius** and the **full height**. This example has radius 180 nm, height 360 nm, and Eφ polarization.
 
 ```bash
-./WSL/build/ifdda_mishchenko_sections cylinder 630 180 360 1.5 0.02 27 0 0 1 0
+./WSL/build/ifdda_mishchenko_sections_cuda cylinder 630 180 360 1.5 0.02 27 0 0 1 0
 ```
 
 The Windows executables take the same arguments. For example, run the MSVC build in PowerShell.
 
 ```powershell
-.\MSVC\build\ifdda_mishchenko_sections.exe cylinder 630 180 360 1.5 0.02 27 0 0 1 0
+.\MSVC\build\ifdda_mishchenko_sections_cuda.exe cylinder 630 180 360 1.5 0.02 27 0 0 1 0
 ```
 
-The program prints `Cext`, `Csca`, and `Cabs` in m², followed by the multipole order, number of surface quadrature points, and relative variation at the final refinement. It returns `0` for success, `1` for invalid or unsupported input, and `2` when the solver cannot return a converged reference.
+The program prints `Cext`, `Csca`, and `Cabs` in m², followed by the multipole order, number of surface quadrature points, relative variation at the final refinement, and backend ID. It returns `0` for success, `1` for invalid or unsupported input, and `2` when the solver cannot return a converged reference.
+
+### Capsule with hemispherical caps
+
+Supply the cap radius r and the straight cylindrical length ℓ between the cap centres. The total tip-to-tip length is ℓ + 2r. The example below has a diameter of 672 nm and a total length of 1 344 nm. The final four arguments select the laboratory Y polarization for the ADDA benchmark with an axis tilt of 27° and an azimuth of 48°. They are the real components sin(48°) and cos(48°) in the particle incidence basis.
+
+~~~bash
+./WSL/build/ifdda_mishchenko_sections_cuda capsule 630 336 672 3 0.1 27 0.7431448254773942 0 0.6691306063588582 0
+~~~
+
+Use the same arguments with `MINGW\build\ifdda_mishchenko_sections_cuda.exe` or `MSVC\build\ifdda_mishchenko_sections_cuda.exe`. With no polarization arguments, the executable uses Eθ. For pure Eφ, append `0 0 1 0`.
 
 ## Call the DLL or shared library from C
 
@@ -100,12 +116,13 @@ int ifdda_mishchenko_v1(
     double sections[3], int *order, int *quadrature, double *variation);
 ```
 
-Let λ be the vacuum wavelength, a and c the transverse and axial spheroid semiaxes, r the cylinder radius, and h its full height.
+Let λ be the vacuum wavelength, a and c the transverse and axial spheroid semiaxes, r the radius of a cylinder or capsule, h the full cylinder height, and ℓ the straight capsule length.
 
 | Shape code | `volume_radius` | `ratio` | `longest` |
 | --- | --- | --- | --- |
 | `-1` spheroid | ∛(a²c)/λ | a/c | max(a,c)/λ |
 | `-2` cylinder | ∛(3r²h/4)/λ | 2r/h | √(r² + h²/4)/λ |
+| `-4` capsule (`IFDDA_MISHCHENKO_CAPSULE`) | ∛(r³ + 3r²ℓ/4)/λ | ℓ/(2r) | (r + ℓ/2)/λ |
 
 The index, angle, and polarization arguments have the same meaning as in the command line. The caller provides storage for all outputs. On success, `sections` contains `Cext`, `Csca`, and `Cabs` in units of λ². Multiply the values by the square of the wavelength **in metres** to obtain m². `order` is the final multipole order, `quadrature` is the total number of surface quadrature points, and `variation` is a relative change expressed as a fraction. Use the cross sections only when the return code is `0`. Serialize calls to the same loaded library because the solver uses Fortran `COMMON` blocks.
 
@@ -144,7 +161,11 @@ On Windows, link with the import library for your toolchain and place the DLL al
 
 ## Use the reference from IF-DDA
 
-Under WSL, configure IF-DDA with `-DIFDDA_WSL_TMATRIX=ON`, or run `IFDDA_WSL_TMATRIX=ON bash build_all.sh` from `CUDA/WSL`. Under Windows, deploy the DLL beside the IF-DDA executable. The MSVC IF-DDA build can also copy a DLL present in `CUDA/Mishchenko` at configuration time. The existing `build_windows.bat` and `build_windows.ps1` support the deployment workflow. For example, run `build_windows.bat -DeployTo ..\MSVC\cmake-build-debug` from `CUDA\Mishchenko` in Command Prompt. The PowerShell script accepts `-Fortran` to select GNU Fortran. `test_reference.py` tests the DLL in the source directory.
+The parent CMake projects enable the accelerated reference automatically when the three external NASA sources are available. Under WSL use -DIFDDA_WSL_TMATRIX=ON (or IFDDA_WSL_TMATRIX=ON bash build_all.sh from CUDA/WSL); on Windows use -DIFDDA_WINDOWS_TMATRIX=ON. Explicitly enabling the option requires the NASA files. The parent projects build only the OpenMP + CUDA FP64 reference, not the standalone CPU executables. IF-DDA verifies backend ID 2 before accepting its results.
+
+Under Windows, CUDA/build_all_cuda.bat builds the ordinary IF-DDA CUDA 11.8 wrappers and the reference DLLs when the NASA files are present. The parent CMake build deploys the three reference runtime DLLs alongside each IF-DDA executable. The reference GPU kernel uses CUDA 12.9 independently of the DDA CUDA 11.8 wrappers. For manual deployment, run build_windows.bat -DeployTo ..\\MSVC\\cmake-build-debug from CUDA/Mishchenko; the PowerShell script also accepts -Fortran to select GNU Fortran. Under WSL the reference is linked as libifdda_mishchenko.so using the same installed CUDA toolkit as IF-DDA.
+
+To test the C API directly, run python test_reference.py <path-to-library>. To compare all standalone backends, run python test_backends.py <build-directory> (add --large for the long capsule test). To check the parent executables, run python test_ifdda_integration.py <IF-DDA-build-directory> <log-directory> --count 6 for WSL/MinGW or --count 2 for MSVC.
 
 The C++ and Fortran IF-DDA cores report the T-matrix sections after DDA for eligible spheroids and cylinders in vacuum under linear or circular plane waves. The effective incident field and object rotation determine the polarization and incidence in the particle frame. The automatic `ellipsoid` reference requires exactly one pair of equal semiaxes. The `cylinder` driver takes the radius and full height in nm and requires a third entry as a placeholder. Its axis is the local z axis. The Fortran driver also reports its separate Mie reference for `sphere`.
 
@@ -164,11 +185,11 @@ Run these examples from `CUDA/WSL` after building IF-DDA.
     --grid-size 32 --cross-section 1 --solver gpbicg
 ```
 
-The IF-DDA commands use the relative permittivity εᵣ = m², laboratory incidence, and geometry rotation. The standalone commands use the refractive index and incidence defined in the particle frame.
+The IF-DDA commands use the relative permittivity εᵣ = m², laboratory incidence, and geometry rotation. The standalone commands use the refractive index and incidence defined in the particle frame. Use the standalone executable or the shared-library API to calculate capsule references.
 
 ## Numerical checks and limits
 
-The solver obtains Cext from the forward amplitude through the optical theorem and Csca by integrating the scattered intensity over 4π. It calculates Cabs as Cext − Csca and checks passivity. It compares Cext and Csca at two multipole orders and two surface quadratures with a relative tolerance of 0.1%. Cylinders use a larger order increment and require two consecutive stable refinements. Absorption can have a larger relative uncertainty near the lossless limit. IF-DDA reports unavailable references and computes relative DDA errors when the reference is positive.
+The solver obtains Cext from the forward amplitude through the optical theorem and Csca by integrating the scattered intensity over 4π. It calculates Cabs as Cext − Csca and checks passivity. For spheroids and cylinders the relative refinement tolerance is 0.1% on extinction and scattering. Cylinders and capsules require two consecutive stable refinements. For capsules the surface quadrature is split at the junction of the flank and the cap, and the relative tolerance is 0.01% on extinction, scattering, and absorption for absorbing particles. IF-DDA reports unavailable references and computes relative DDA errors when the reference is positive.
 
 The IF-DDA examples above were checked on a TITAN V. Their reference values are shown below.
 
@@ -181,17 +202,22 @@ For the tilted cylinder, WSL double-precision DDA differed from T-matrix by −1
 
 The direct-library test agreed with the independent Mie result for x = 5 and m = 5 within 0.00002%. For the aspect-ratio-2 spheroid at x = 5, the variation against earlier references was under 0.05% for m = 2.5 + 0.1i, 4 + 0.1i, and 5 + 0.1i. The m = 6 + 0.1i case reached the refinement limit. For the cylinder at radius 0.45λ, height 0.9λ, m = 2.5 + 0.1i, θ = 27°, and Eφ polarization, the library agreed within 0.05% with a separate extended-precision NASA Fortran run at order 38 with 456 surface points. See `build/cylinder_qp`.
 
-### Standalone Release validation
+### Standalone and IF-DDA validation
 
-The WSL, MSVC, and MinGW builds were tested through both the shared-library API and the standalone executable. The three builds agreed within 1e-12 relative for the two command-line examples below. All three also reproduced the independent Mie sphere result at x = 5 and m = 5 within 0.00002%.
+The three Release backends were built and tested under WSL, MinGW and MSVC (TITAN V). Eight cases per backend cover a spheroid, circular cylinder, spherical capsule, general complex polarization, both poles, equator and transparent material. All three backends returned the same multipole order and surface quadrature in each case. The largest absolute difference in cross sections between backends was below 3e-28 m². The spherical capsule was also checked against independent Mie values. The test rejects non-axisymmetric ellipsoids.
 
-| Standalone example | Cext (m²) | Csca (m²) | Cabs (m²) |
-| --- | ---: | ---: | ---: |
-| Prolate spheroid, Eθ | 1.347709480e-13 | 1.192705349e-13 | 1.550041306e-14 |
-| Circular cylinder, Eφ | 2.597371208e-13 | 2.356175667e-13 | 2.411955408e-14 |
+| Standalone example | Cext (m²) | Csca (m²) | Cabs (m²) | Order / quadrature |
+| --- | ---: | ---: | ---: | ---: |
+| Prolate spheroid, Eθ | 1.347709480e-13 | 1.192705349e-13 | 1.550041306e-14 | 13 / 82 |
+| Circular cylinder, Eφ | 2.597371208e-13 | 2.356175667e-13 | 2.411955408e-14 | 18 / 100 |
+| Spherical capsule | 8.837754602e-13 | 5.093785336e-13 | 3.743969266e-13 | 20 / 104 |
 
-The tests also checked the rejection of triaxial axes and a zero incident polarization. The logs are in `build/standalone-validation`. GNU Make reported clock skew on the Windows-mounted filesystem under WSL. The build and numerical tests completed successfully.
+The large capsule test (radius 336 nm, straight length 672 nm, wavelength 630 nm, m=3+0.1i, 27 degrees, mixed linear polarization) also agreed across all three backends, reaching N=49 and 424 quadrature points. The serial values are 1.6596905470001064e-12, 9.87279495837564e-13 and 6.724110511625422e-13 m^2. The largest absolute backend difference was 5.05e-27 m^2. On WSL/TITAN V the observed wall times were 193.21 s (serial), 219.89 s (OpenMP) and 2.54 s (OpenMP+CUDA), with other compilation processes running concurrently. These are indicative elapsed times, not an isolated performance benchmark.
+
+The accelerated direct-library test also reproduced the independent Mie result for x=5 and m=5, the three converged high-index spheroid cases and the extended-precision cylinder reference. The m=6+0.1i spheroid retains the existing refinement-limit status 2; it is not reported as a converged reference.
+
+The parent builds were validated with the tilted cylinder and the spheroid described above, using grid size 16, in all six WSL and MinGW executable variants and both MSVC variants. Every run used backend ID 2 and completed the DDA calculation successfully. The maximum relative difference against the tabulated T-matrix references was 4.88e-8, including the single-precision IF-DDA drivers. The reference library always computes in double precision.
 
 ## Source
 
-The NASA GISS code is available for nonprofit scientific research under the conditions in its source header. See M. I. Mishchenko, *Applied Optics* **39**, 1026–1031 (2000). [DOI 10.1364/AO.39.001026](https://doi.org/10.1364/AO.39.001026)
+The original `ampld.lp.f`, `ampld.par.f`, and `lpd.f` are in `NASA`. The code is available for nonprofit scientific research under the conditions in its source header. See the [NASA GISS T-matrix page](https://www.giss.nasa.gov/staff/mmishchenko/tmatrix/) and M. I. Mishchenko, *Applied Optics* **39**, 1026–1031 (2000). [DOI 10.1364/AO.39.001026](https://doi.org/10.1364/AO.39.001026)

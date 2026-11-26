@@ -297,14 +297,6 @@ function(add_ifdda_cuda_variant precision)
         add_custom_command(TARGET ${_executable} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 "${IFDDA_KERNEL_DLL_${precision}}" "$<TARGET_FILE_DIR:${_executable}>")
-        set(_mishchenko_dll "${CMAKE_CURRENT_LIST_DIR}/../Mishchenko/ifdda_mishchenko.dll")
-        if(EXISTS "${_mishchenko_dll}")
-            set_property(TARGET ${_executable} APPEND PROPERTY LINK_DEPENDS "${_mishchenko_dll}")
-            add_custom_command(TARGET ${_executable} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${_mishchenko_dll}" "$<TARGET_FILE_DIR:${_executable}>"
-                VERBATIM)
-        endif()
         foreach(_dll IN LISTS _runtime_dlls)
             if(_dll MATCHES "^libfftw")
                 set(_dll_source "${IFDDA_FFTW_ROOT}/${_dll}")
@@ -362,3 +354,10 @@ add_ifdda_cuda_variant(double)
 add_ifdda_cuda_variant(float)
 
 message(STATUS "MSVC executables: test_main0_cpp_cdmlib_cpp_cuda_double, test_main0_cpp_cdmlib_cpp_cuda_float (main0.cpp + cdmlib.cpp)")
+
+# Build and deploy the accelerated Mishchenko reference alongside all IF-DDA executables.
+include("${CMAKE_CURRENT_LIST_DIR}/../Mishchenko/IFDDAIntegration.cmake")
+ifdda_configure_mishchenko(IFDDA_WINDOWS_TMATRIX)
+if(IFDDA_WINDOWS_TMATRIX)
+    ifdda_attach_windows_references("${CMAKE_CURRENT_SOURCE_DIR}")
+endif()

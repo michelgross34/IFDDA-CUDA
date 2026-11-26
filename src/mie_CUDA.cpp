@@ -118,6 +118,7 @@ extern "C" void ifdda_report_scattnlay_(const int* layers, const REAL* radii,
 }
 
 #if defined(IFDDA_LINK_MISHCHENKO)
+extern "C" int ifdda_mishchenko_backend();
 extern "C" int ifdda_mishchenko_v1(int, double, double, double, double, double, double,
     double, double, double, double, double*, int*, int*, double*);
 #endif
@@ -156,7 +157,11 @@ ReferenceFunction load_reference() {
         LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (!module) return nullptr;
     const auto function = reinterpret_cast<ReferenceFunction>(GetProcAddress(module,"ifdda_mishchenko_v1"));
-    if (!function) FreeLibrary(module);
+    const auto backend = reinterpret_cast<int (*)()>(GetProcAddress(module,"ifdda_mishchenko_backend"));
+    if (!function || !backend || backend() != 2) {
+        FreeLibrary(module);
+        return nullptr;
+    }
     return function;
 }
 #endif
@@ -198,10 +203,14 @@ extern "C" void ifdda_report_tmatrix_(const int* shape, const REAL* dimensions,
 #if defined(_WIN32)
     static const auto reference = load_reference();
     if (!reference) {
-        std::puts(" T-matrix (Mishchenko) unavailable: ifdda_mishchenko.dll could not be loaded beside the executable.");
+        std::puts(" T-matrix (Mishchenko) unavailable: OpenMP + CUDA ifdda_mishchenko.dll could not be loaded beside the executable.");
         return;
     }
 #else
+    if (ifdda_mishchenko_backend() != 2) {
+        std::puts(" T-matrix (Mishchenko) unavailable: OpenMP + CUDA backend required.");
+        return;
+    }
     constexpr auto reference = &ifdda_mishchenko_v1;
 #endif
 
@@ -237,14 +246,14 @@ extern "C" void ifdda_report_tmatrix_(const int* shape, const REAL* dimensions,
     }
     if (status != 0) {
         std::printf(" T-matrix (Mishchenko) unavailable: %s.\n",
-            status == 2 ? "cross sections did not converge" : "input outside the supported range");
+            status == 3 ? "CUDA backend error" : (status == 2 ? "cross sections did not converge" : "input outside the supported range"));
         return;
     }
 
     const char* labels[] = {"Cext","Csca","Cabs"};
     const double dda[] = {*dda_ext,*dda_sca,*dda_abs};
     const double area = double(*wavelength)*double(*wavelength);
-    std::printf(" T-matrix (Mishchenko): N=%d, surface quadrature=%d, relative variation=%.3g\n",
+    std::printf(" T-matrix (Mishchenko, OpenMP + CUDA FP64): N=%d, surface quadrature=%d, relative variation=%.3g\n",
         order,quadrature,variation);
     for (int i=0; i<3; ++i) {
         const double value = sections[i]*area;

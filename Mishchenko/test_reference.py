@@ -1,9 +1,14 @@
 import ctypes as C
 import math
+import sys
+import os
 from pathlib import Path
 from time import perf_counter
 
-dll = C.CDLL(str(Path(__file__).resolve().with_name("ifdda_mishchenko.dll")))
+library = Path(sys.argv[1]).resolve() if len(sys.argv)>1 else Path(__file__).resolve().with_name("ifdda_mishchenko.dll")
+if os.name == "nt":
+    dll_directory = os.add_dll_directory(str(library.parent))
+dll = C.CDLL(str(library))
 calculate = dll.ifdda_mishchenko_v1
 calculate.argtypes = (
     [C.c_int] + [C.c_double] * 10
