@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("build_dir", type=Path)
 parser.add_argument("log_dir", type=Path)
 parser.add_argument("--count", type=int, required=True)
+parser.add_argument("--precision", choices=("auto","dp","qp"), default="auto")
 args = parser.parse_args()
 build = args.build_dir.resolve()
 logs = args.log_dir.resolve()
@@ -18,7 +19,7 @@ suffix = ".exe" if os.name == "nt" else ""
 executables = sorted(p for p in build.glob("test_main*cuda_*" + suffix)
                      if p.is_file() and p.name.endswith(("double"+suffix, "float"+suffix)))
 assert len(executables) == args.count, executables
-env = dict(os.environ, OMP_NUM_THREADS="8")
+env = dict(os.environ, OMP_NUM_THREADS="8", IFDDA_TMATRIX_PRECISION=args.precision)
 cases = [
     ("cylinder", "180,360,1", "23,39,17",
      (2.659051266e-13, 1.776699783e-13, 8.823514830e-14)),
@@ -40,6 +41,7 @@ for exe in executables:
         (cwd / "output.txt").write_text(text, encoding="utf-8")
         assert result.returncode == 0, (exe.name, geometry, result.returncode, cwd)
         assert "T-matrix (Mishchenko, OpenMP + CUDA FP64)" in text, (exe.name, cwd)
+        assert "T-matrix precision="+("qp" if args.precision=="qp" else "dp") in text,(exe.name,cwd)
         actual = []
         for label in ("Cext", "Csca", "Cabs"):
             match = re.search(label + r"\s*\(T-matrix\)\s*=\s*([0-9.eE+\-]+)", text)

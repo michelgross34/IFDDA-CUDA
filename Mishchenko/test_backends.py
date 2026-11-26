@@ -23,16 +23,18 @@ cases = [
 if "--large" in sys.argv:
     cases.append(("large capsule", ["capsule","630","336","672","3",".1","27",
                                      "0.7431448254773942","0","0.6691306063588582","0"]))
+mode="qp" if "--qp" in sys.argv else "dp"
 for label,args in cases:
     results=[]
     for expected,backend in enumerate(("cpu","openmp","cuda")):
         exe=root/("ifdda_mishchenko_sections_"+backend+suffix)
         start=time.perf_counter()
-        output=subprocess.check_output([str(exe),*args],env=env,text=True,stderr=subprocess.STDOUT)
+        output=subprocess.check_output([str(exe),*args,"--precision",mode],env=env,text=True,stderr=subprocess.STDOUT)
         elapsed=time.perf_counter()-start
         vals=[float(v) for v in re.findall(r"C(?:ext|sca|abs) \(T-matrix\) = ([^\s]+)",output)]
         assert len(vals)==3 and all(math.isfinite(v) for v in vals),output
         assert f"Backend = {expected}" in output,output
+        assert f"T-matrix precision = {mode}" in output,output
         order=re.search(r"Order = (\d+), surface quadrature = (\d+)",output)
         assert order,output
         results.append((vals,order.groups(),elapsed))

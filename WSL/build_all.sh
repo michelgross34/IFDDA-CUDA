@@ -88,7 +88,10 @@ if [[ -n "${IFDDA_WSL_TMATRIX:-}" ]]; then
     cmake_options+=("-DIFDDA_WSL_TMATRIX=${IFDDA_WSL_TMATRIX}")
 elif [[ -f "${CUDA_ROOT}/Mishchenko/NASA/ampld.lp.f" &&
         -f "${CUDA_ROOT}/Mishchenko/NASA/ampld.par.f" &&
-        -f "${CUDA_ROOT}/Mishchenko/NASA/lpd.f" ]]; then
+        -f "${CUDA_ROOT}/Mishchenko/NASA/lpd.f" &&
+        -f "${CUDA_ROOT}/Mishchenko/NASA/amplq.lp.f" &&
+        -f "${CUDA_ROOT}/Mishchenko/NASA/amplq.par.f" &&
+        -f "${CUDA_ROOT}/Mishchenko/NASA/lpq.f" ]]; then
     cmake_options+=("-DIFDDA_WSL_TMATRIX=ON")
 fi
 

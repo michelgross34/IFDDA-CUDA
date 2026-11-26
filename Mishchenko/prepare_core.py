@@ -123,3 +123,39 @@ lapack = (source / "lpd.f").read_text(encoding="ascii")
 lapack = "\n".join(line for line in lapack.splitlines()
                    if not line or line[0] in "Cc*! " or line[0].isdigit()) + "\n"
 (build / "lpd.f").write_text(lapack, encoding="ascii")
+
+# Extended precision NASA solver. Only the final TMAT block is shared with DP.
+from quad_intrinsics import convert_quad_intrinsics
+qcode=convert_quad_intrinsics((source/"amplq.lp.f").read_text(encoding="ascii"))
+qcode=qcode[qcode.index("C   New release including"):]
+noticeq,qcode=qcode.split("      IMPLICIT REAL*8 (A-H,O-Z)",1)
+declq=qcode.split("C  OPEN FILES",1)[0].replace("      REAL*4","      REAL*8")
+blocksq=qcode.split("  155 CONTINUE",1)[1].split("      WALB=",1)[0]
+rq=qcode[qcode.index("      SUBROUTINE CONST "):]
+rq=rq.replace("      IF (NP.EQ.-2) GO  TO 11",
+    "      IF (NP.EQ.-2.OR.(NP.EQ.-4.AND.EPS.GT.0Q0)) GO TO 11",1)
+rq=rq.replace("      CALL QGAUSS(NG1,0,0,X1,W1)",
+    "      IF (NP.EQ.-4) XX=-EPS/SQRT(1Q0+EPS*EPS)\n      CALL QGAUSS(NG1,0,0,X1,W1)",1)
+rq=rq.replace(capsule_hook,capsule_hook+"\n      IF (NP.EQ.-4) CALL RSPCAP(X,NG,NGAUSS,A,EPS,R,DR)",1)
+profile=routines[routines.index("      SUBROUTINE RSPCAP"):].replace("REAL*8","REAL*16").replace("DSQRT","SQRT")
+profile=re.sub(r"(?<=\d)D0","Q0",profile)
+rq+=profile
+rq=re.sub(r"(?mi)^      (WRITE\s*\(6,100[56]\).*|PRINT\s+110[1-4].*)$",r"C     \1",rq)
+rq=rq.replace("      IF (NMAX.GT.NPN1) STOP","      IF (NMAX.GT.NPN1) RETURN")
+ttq=rq.index("      SUBROUTINE TT(")
+rq=rq[:ttq]+rq[ttq:].replace("      COMMON /CT/ TR1,TI1","      COMMON /CT/ TR1,TI1\n      COMMON /MISH_STATUS/ IFAIL",1).replace("      IF (INFO.NE.0) WRITE (6,1100) INFO","      IF (INFO.NE.0) THEN\n         IFAIL=1\n         RETURN\n      ENDIF")
+# Avoid rounding the matrix product to FP64 before the final TMAT export.
+rq=rq[:ttq]+rq[ttq:].replace("      REAL*8 TR1(NPN2,NPN2),TI1(NPN2,NPN2)","      REAL*16 TR,TI,ARR,ARI,AR,AI\n      REAL*8 TR1(NPN2,NPN2),TI1(NPN2,NPN2)",1)
+blocksq=blocksq.replace("         NM=NMAX-M+1","         IF (IFAIL.NE.0) RETURN\n         NM=NMAX-M+1")
+startq="      SUBROUTINE BUILD_MISH_QP(NP,AD,EPSD,LAMD,MRRD,MRID,\n     &                         NMAX,NGAUSS,ISTAT)\n      IMPLICIT REAL*8 (A-H,O-Z)\n      REAL*8 AD,EPSD,LAMD,MRRD,MRID\n"
+setupq=setup.replace("      IFAIL=0","      A=REAL(AD,16)\n      EPS=REAL(EPSD,16)\n      LAM=REAL(LAMD,16)\n      MRR=REAL(MRRD,16)\n      MRI=REAL(MRID,16)\n      IFAIL=0").replace("DACOS(-1D0)","ACOS(-1Q0)")
+lq=convert_quad_intrinsics((source/"lpq.f").read_text(encoding="ascii"))
+lq="\n".join(line for line in lq.splitlines() if not line or line[0] in "Cc*! " or line[0].isdigit())+"\n"
+q=noticeq+startq+declq+setupq+blocksq+"\n      ISTAT=0\n      END\n\n"+rq+"\n"+lq
+names={x.upper() for x in re.findall(r"(?mi)^ {6}[^!\n]*?\b(?:SUBROUTINE|FUNCTION)\s+([A-Z][A-Z0-9_]*)",q)}-{"BUILD_MISH_QP"}
+names|={x.upper() for x in re.findall(r"(?mi)^ {6}COMMON\s*/([A-Z0-9_]+)/",q)}-{"TMAT"}
+pat=re.compile(r"\b("+"|".join(sorted(names))+r")\b",re.I)
+def rename_q(line):
+    if not line.startswith(" "):return line
+    return "".join(part if i%2 else pat.sub(lambda mat:"MQ_"+mat[0].upper(),part) for i,part in enumerate(re.split(r"('[^']*')",line)))
+(build/"mish_qp.f").write_text(parallelize("\n".join(map(rename_q,q.splitlines()))+"\n"),encoding="ascii")

@@ -1,22 +1,22 @@
 # Mishchenko T-matrix for IF-DDA
 
-The NASA GISS fixed-orientation solver computes extinction, scattering, and absorption in double precision for homogeneous, isotropic, nonmagnetic particles in vacuum under plane-wave illumination. The standalone executable and shared library support spheroids (ellipsoids of revolution), finite circular cylinders, and capsules with hemispherical caps. Triaxial ellipsoids require a different solver, such as the DDA in IF-DDA.
+The NASA GISS fixed-orientation solver computes extinction, scattering, and absorption using double- or quadruple-precision T-matrix construction for homogeneous, isotropic, nonmagnetic particles in vacuum under plane-wave illumination. The standalone executable and shared library support spheroids (ellipsoids of revolution), finite circular cylinders, and capsules with hemispherical caps. Triaxial ellipsoids require a different solver, such as the DDA in IF-DDA.
 
 ## Execution backends
 
 | Standalone executable (add .exe on Windows) | Backend ID | Algorithm |
 | --- | ---: | --- |
-| ifdda_mishchenko_sections_cpu | 0 | Serial double-precision Fortran |
-| ifdda_mishchenko_sections_openmp | 1 | OpenMP double-precision Fortran |
+| ifdda_mishchenko_sections_cpu | 0 | Serial DP/QP Fortran |
+| ifdda_mishchenko_sections_openmp | 1 | OpenMP DP/QP Fortran |
 | ifdda_mishchenko_sections_cuda | 2 | OpenMP T-matrix construction and CUDA FP64 angular integration |
 
-The three versions use the same NASA fixed-orientation double-precision solver, geometries, convergence criteria and C interface. OpenMP distributes independent surface-integral terms in TMATR0 and TMATR, preserving the summation order within each term. Matrix factorization remains on the CPU. The CUDA backend contracts incident multipoles once per refinement on the CPU and evaluates the outgoing amplitudes in parallel on the GPU; the cost per direction is reduced from O(N^3) to O(N^2). The forward amplitude and the full-sphere scattering quadrature use double precision, with the original quadrature weights and deterministic host summation. The implementation is adapted from [TMatrix-Holo](https://github.com/michelgross34/TMatrix-Holo). Neither FFT nor quadruple precision is required here.
+The three versions use the same NASA fixed-orientation DP and QP solvers, geometries, convergence criteria and C interface. OpenMP distributes independent surface-integral terms in TMATR0 and TMATR, preserving the summation order within each term. Matrix factorization remains on the CPU. The CUDA backend contracts incident multipoles once per refinement on the CPU and evaluates the outgoing amplitudes in parallel on the GPU; the cost per direction is reduced from O(N^3) to O(N^2). The forward amplitude and the full-sphere scattering quadrature use double precision, with the original quadrature weights and deterministic host summation. The implementation is adapted from [TMatrix-Holo](https://github.com/michelgross34/TMatrix-Holo). No FFT is required.
 
 Set OMP_NUM_THREADS to control the OpenMP worker count. When it is not set, the library uses up to eight workers and restores the caller's OpenMP thread-count setting on return. CUDA initialization and transfers can dominate very small calculations.
 
 ## Build the libraries and standalone executables
 
-Obtain the original NASA fixed-orientation files ampld.lp.f, ampld.par.f and lpd.f and place them in NASA/. They are external dependencies, not distributed in this repository. Requirements: CMake 3.20 or later, Python 3, GNU Fortran with OpenMP, C++17 and NVIDIA CUDA for the GPU variant. The build prepares private copies of the original sources; it never edits the NASA files.
+Obtain the six original NASA fixed-orientation files (DP: ampld.lp.f, ampld.par.f, lpd.f; QP: amplq.lp.f, amplq.par.f, lpq.f) and place them in NASA/. Both source variants carry the update date 08/06/2005. They are external dependencies, not distributed in this repository. Requirements: CMake 3.20 or later, Python 3, GNU Fortran with OpenMP and IEEE binary128 support (libquadmath), C++17 and NVIDIA CUDA for the GPU variant. The build prepares private copies of the original sources; it never edits the NASA files.
 
 | Build script | Release output directory |
 | --- | --- |
@@ -24,7 +24,7 @@ Obtain the original NASA fixed-orientation files ampld.lp.f, ampld.par.f and lpd
 | MSVC/build_all.bat | MSVC/build |
 | MINGW/build_all.bat | MINGW/build |
 
-Each script builds all three standalone executables and their shared libraries and runs the numerical backend tests. Windows builds include the corresponding import libraries.
+Each script builds all three standalone executables and their shared libraries and runs the numerical backend tests in both DP and QP. Windows builds include the corresponding import libraries.
 
 ### WSL
 
@@ -50,6 +50,55 @@ The serial and OpenMP DLLs are ifdda_mishchenko_cpu.dll and ifdda_mishchenko_ope
 Open the WSL, MSVC or MINGW subdirectory with its matching toolchain. Build All creates the three executables. In an IDE build the binaries are in the mishchenko subdirectory (Windows: mishchenko/<configuration>); the build_all scripts additionally copy the Release binaries to their build directory. Select Release for numerical performance measurements.
 
 IFDDA_MISHCHENKO_ENABLE_CUDA=OFF builds the serial and OpenMP standalone variants without the CUDA toolkit. IFDDA_MISHCHENKO_BUILD_STANDALONE=OFF builds only the accelerated library and is used by the parent IF-DDA projects.
+
+## T-matrix construction precision
+
+Each of the three executables and libraries supports:
+
+| Mode | T-matrix construction |
+| --- | --- |
+| dp | IEEE binary64, no fallback |
+| qp | IEEE binary128 surface integrals, Bessel functions, LU inversion and matrix product |
+| auto (default) | DP first; repeat the refinement in QP if the DP solver returns nonconvergence (status 2) |
+
+QP uses the original NASA extended-precision LAPACK implementation, with
+modern GNU Fortran binary128 intrinsics and OpenMP surface integration.
+The matrix product in TT is accumulated in binary128 before export.
+Both solvers share the final FP64 T-matrix storage, and the amplitude and
+cross-section integration (CPU or GPU) use FP64. Inputs and returned
+sections use the existing double-precision ABI. QP does not mean
+end-to-end 128-bit CUDA arithmetic. The QP refinement allows order up to
+72 and up to 1000 surface quadrature points, subject to the existing
+input-size guard, and retains the original cross-section tolerances.
+
+Append the precision option after the geometry and optional polarization:
+
+~~~bash
+ifdda_mishchenko_sections_cuda spheroid 630 140 280 1.5 0.02 27 --precision qp
+~~~
+
+Each successful standalone calculation reports the selected precision.
+The C ABI retains ifdda_mishchenko_v1 (now automatic) and adds
+ifdda_mishchenko_v2, which accepts a precision selector (0 auto, 1 dp,
+2 qp) and returns the construction precision actually used (1 or 2).
+The complete signature is in mishchenko_c.h.
+
+IF-DDA uses the OpenMP + CUDA v2 library with automatic precision by
+default, for both single- and double-precision DDA drivers.
+To force the reference precision, set IFDDA_TMATRIX_PRECISION to dp
+or qp; unset it or set auto to restore the default. For example:
+
+~~~bash
+export IFDDA_TMATRIX_PRECISION=qp
+~~~
+
+~~~bat
+set IFDDA_TMATRIX_PRECISION=qp
+~~~
+
+The IF-DDA reference report prints the selected construction precision.
+A CUDA error is not retried as a precision problem. QP is not a
+guarantee of convergence for every size, aspect ratio or index.
 
 ## Calculate cross sections with the standalone executable
 
@@ -161,11 +210,11 @@ On Windows, link with the import library for your toolchain and place the DLL al
 
 ## Use the reference from IF-DDA
 
-The parent CMake projects enable the accelerated reference automatically when the three external NASA sources are available. Under WSL use -DIFDDA_WSL_TMATRIX=ON (or IFDDA_WSL_TMATRIX=ON bash build_all.sh from CUDA/WSL); on Windows use -DIFDDA_WINDOWS_TMATRIX=ON. Explicitly enabling the option requires the NASA files. The parent projects build only the OpenMP + CUDA FP64 reference, not the standalone CPU executables. IF-DDA verifies backend ID 2 before accepting its results.
+The parent CMake projects enable the accelerated reference automatically when the six external NASA sources are available. Under WSL use -DIFDDA_WSL_TMATRIX=ON (or IFDDA_WSL_TMATRIX=ON bash build_all.sh from CUDA/WSL); on Windows use -DIFDDA_WINDOWS_TMATRIX=ON. Explicitly enabling the option requires the NASA files. The parent projects build only the OpenMP + CUDA FP64 reference, not the standalone CPU executables. IF-DDA verifies backend ID 2 before accepting its results.
 
 Under Windows, CUDA/build_all_cuda.bat builds the ordinary IF-DDA CUDA 11.8 wrappers and the reference DLLs when the NASA files are present. The parent CMake build deploys the three reference runtime DLLs alongside each IF-DDA executable. The reference GPU kernel uses CUDA 12.9 independently of the DDA CUDA 11.8 wrappers. For manual deployment, run build_windows.bat -DeployTo ..\\MSVC\\cmake-build-debug from CUDA/Mishchenko; the PowerShell script also accepts -Fortran to select GNU Fortran. Under WSL the reference is linked as libifdda_mishchenko.so using the same installed CUDA toolkit as IF-DDA.
 
-To test the C API directly, run python test_reference.py <path-to-library>. To compare all standalone backends, run python test_backends.py <build-directory> (add --large for the long capsule test). To check the parent executables, run python test_ifdda_integration.py <IF-DDA-build-directory> <log-directory> --count 6 for WSL/MinGW or --count 2 for MSVC.
+To test the C API directly, run python test_reference.py <path-to-library>. To compare all standalone backends, run python test_backends.py <build-directory> (add --qp for quadruple precision, --large for the long capsule test). To check the parent executables, run python test_ifdda_integration.py <IF-DDA-build-directory> <log-directory> --count 6 for WSL/MinGW or --count 2 for MSVC. Add --precision qp to force and verify QP in the integration test.
 
 The C++ and Fortran IF-DDA cores report the T-matrix sections after DDA for eligible spheroids and cylinders in vacuum under linear or circular plane waves. The effective incident field and object rotation determine the polarization and incidence in the particle frame. The automatic `ellipsoid` reference requires exactly one pair of equal semiaxes. The `cylinder` driver takes the radius and full height in nm and requires a third entry as a placeholder. Its axis is the local z axis. The Fortran driver also reports its separate Mie reference for `sphere`.
 
@@ -200,11 +249,11 @@ The IF-DDA examples above were checked on a TITAN V. Their reference values are 
 
 For the tilted cylinder, WSL double-precision DDA differed from T-matrix by −1.1046% in extinction, −0.9734% in scattering, and −1.3688% in absorption. The reference reached order 18 with 100 surface points. Checks covered six WSL and two MSVC Debug executables, MinGW C++ and Fortran builds, and two MSVC Release builds. The WSL Debug and MSVC Debug cylinder references agreed across drivers and precisions within 0.00001%. Spheroid checks covered all three symmetry axes. Logs are in `build/cylinder-ifdda-20261125` and `build/spheroid-only`.
 
-The direct-library test agreed with the independent Mie result for x = 5 and m = 5 within 0.00002%. For the aspect-ratio-2 spheroid at x = 5, the variation against earlier references was under 0.05% for m = 2.5 + 0.1i, 4 + 0.1i, and 5 + 0.1i. The m = 6 + 0.1i case reached the refinement limit. For the cylinder at radius 0.45λ, height 0.9λ, m = 2.5 + 0.1i, θ = 27°, and Eφ polarization, the library agreed within 0.05% with a separate extended-precision NASA Fortran run at order 38 with 456 surface points. See `build/cylinder_qp`.
+The direct-library test agreed with the independent Mie result for x = 5 and m = 5 within 0.00002%. For the aspect-ratio-2 spheroid at x = 5, the variation against earlier references was under 0.05% for m = 2.5 + 0.1i, 4 + 0.1i, and 5 + 0.1i. The m = 6 + 0.1i case reached the refinement limit in DP and in the extended QP refinement. For the cylinder at radius 0.45λ, height 0.9λ, m = 2.5 + 0.1i, θ = 27°, and Eφ polarization, the library agreed within 0.05% with a separate extended-precision NASA Fortran run at order 38 with 456 surface points. See `build/cylinder_qp`.
 
 ### Standalone and IF-DDA validation
 
-The three Release backends were built and tested under WSL, MinGW and MSVC (TITAN V). Eight cases per backend cover a spheroid, circular cylinder, spherical capsule, general complex polarization, both poles, equator and transparent material. All three backends returned the same multipole order and surface quadrature in each case. The largest absolute difference in cross sections between backends was below 3e-28 m². The spherical capsule was also checked against independent Mie values. The test rejects non-axisymmetric ellipsoids.
+The three Release backends were built and tested under WSL, MinGW and MSVC (TITAN V). Eight cases per backend and precision cover a spheroid, circular cylinder, spherical capsule, general complex polarization, both poles, equator and transparent material. All three backends returned the same multipole order and surface quadrature in each case. The largest absolute difference in cross sections between backends was below 3e-28 m² in the eight standard DP cases and below 3e-28 m² in the corresponding QP cases. The spherical capsule was also checked against independent Mie values. The test rejects non-axisymmetric ellipsoids.
 
 | Standalone example | Cext (m²) | Csca (m²) | Cabs (m²) | Order / quadrature |
 | --- | ---: | ---: | ---: | ---: |
@@ -214,9 +263,11 @@ The three Release backends were built and tested under WSL, MinGW and MSVC (TITA
 
 The large capsule test (radius 336 nm, straight length 672 nm, wavelength 630 nm, m=3+0.1i, 27 degrees, mixed linear polarization) also agreed across all three backends, reaching N=49 and 424 quadrature points. The serial values are 1.6596905470001064e-12, 9.87279495837564e-13 and 6.724110511625422e-13 m^2. The largest absolute backend difference was 5.05e-27 m^2. On WSL/TITAN V the observed wall times were 193.21 s (serial), 219.89 s (OpenMP) and 2.54 s (OpenMP+CUDA), with other compilation processes running concurrently. These are indicative elapsed times, not an isolated performance benchmark.
 
-The accelerated direct-library test also reproduced the independent Mie result for x=5 and m=5, the three converged high-index spheroid cases and the extended-precision cylinder reference. The m=6+0.1i spheroid retains the existing refinement-limit status 2; it is not reported as a converged reference.
+The accelerated direct-library test also reproduced the independent Mie result for x=5 and m=5, the three converged high-index spheroid cases and the extended-precision cylinder reference. For the m=6+0.1i spheroid, auto mode retries in QP but still returns refinement-limit status 2 (relative variation 0.00324, exceeding the 0.001 tolerance). It is not reported as a converged reference.
 
-The parent builds were validated with the tilted cylinder and the spheroid described above, using grid size 16, in all six WSL and MinGW executable variants and both MSVC variants. Every run used backend ID 2 and completed the DDA calculation successfully. The maximum relative difference against the tabulated T-matrix references was 4.88e-8, including the single-precision IF-DDA drivers. The reference library always computes in double precision.
+The parent builds were validated with the tilted cylinder and the spheroid described above, using grid size 16, in all six WSL and MinGW executable variants and both MSVC variants. Every run used backend ID 2 and completed the DDA calculation successfully. The maximum relative difference against the tabulated T-matrix references was 4.88e-8, including the single-precision IF-DDA drivers. The reference library uses DP/QP construction and FP64 angular integration.
+
+The explicit QP direct-library tests under WSL gave a maximum relative error of 1.08e-7 against independent Mie for the sphere at x=5, m=5, and 8.19e-5 against the tabulated spheroid reference at x=5, m=5+0.1i. The spheroid converged at N=36 with 780 surface points. All 14 local IF-DDA executables and the six WSL publication-checkout executables passed both the automatic and forced-QP cylinder and spheroid integration tests.
 
 ## Source
 

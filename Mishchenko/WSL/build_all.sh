@@ -11,3 +11,4 @@ for name in libifdda_mishchenko.so libifdda_mishchenko_cpu.so libifdda_mishchenk
     cmake -E copy_if_different "$output_dir/$name" "$build_dir"
 done
 python3 "$source_dir/../test_backends.py" "$build_dir"
+python3 "$source_dir/../test_backends.py" "$build_dir" --qp

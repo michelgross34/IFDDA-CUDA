@@ -39,6 +39,16 @@ IFDDA_MISHCHENKO_API int ifdda_mishchenko_v1(
     double ep_real, double ep_imag, double es_real, double es_imag,
     double sections[3], int* order, int* quadrature, double* variation);
 
+/* Precision: 0 = DP with QP fallback, 1 = DP only, 2 = QP only.
+ * QP construction uses binary128; final T-matrix and sections use FP64.
+ * precision_used reports the selected construction precision (1 or 2). */
+IFDDA_MISHCHENKO_API int ifdda_mishchenko_v2(
+    int shape, double volume_radius, double ratio, double longest,
+    double mr, double mi, double theta_deg,
+    double ep_real, double ep_imag, double es_real, double es_imag,
+    int precision, double sections[3], int* order, int* quadrature,
+    double* variation, int* precision_used);
+
 #ifdef __cplusplus
 }
 #endif

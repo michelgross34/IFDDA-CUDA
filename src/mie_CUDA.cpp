@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "cuda_data.h"
 #include "cuda_utils.h"
 #include "kernel.h"
@@ -119,15 +120,15 @@ extern "C" void ifdda_report_scattnlay_(const int* layers, const REAL* radii,
 
 #if defined(IFDDA_LINK_MISHCHENKO)
 extern "C" int ifdda_mishchenko_backend();
-extern "C" int ifdda_mishchenko_v1(int, double, double, double, double, double, double,
-    double, double, double, double, double*, int*, int*, double*);
+extern "C" int ifdda_mishchenko_v2(int, double, double, double, double, double, double,
+    double, double, double, double, int, double*, int*, int*, double*, int*);
 #endif
 
 #if defined(_WIN32) || defined(IFDDA_LINK_MISHCHENKO)
 namespace {
 #if defined(_WIN32)
 using ReferenceFunction = int (*)(int, double, double, double, double, double, double,
-    double, double, double, double, double*, int*, int*, double*);
+    double, double, double, double, int, double*, int*, int*, double*, int*);
 #endif
 using Vector = std::array<double,3>;
 constexpr double reference_pi = 3.14159265358979323846;
@@ -156,7 +157,7 @@ ReferenceFunction load_reference() {
     const HMODULE module = LoadLibraryExW(dll.c_str(),nullptr,
         LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (!module) return nullptr;
-    const auto function = reinterpret_cast<ReferenceFunction>(GetProcAddress(module,"ifdda_mishchenko_v1"));
+    const auto function = reinterpret_cast<ReferenceFunction>(GetProcAddress(module,"ifdda_mishchenko_v2"));
     const auto backend = reinterpret_cast<int (*)()>(GetProcAddress(module,"ifdda_mishchenko_backend"));
     if (!function || !backend || backend() != 2) {
         FreeLibrary(module);
@@ -211,7 +212,7 @@ extern "C" void ifdda_report_tmatrix_(const int* shape, const REAL* dimensions,
         std::puts(" T-matrix (Mishchenko) unavailable: OpenMP + CUDA backend required.");
         return;
     }
-    constexpr auto reference = &ifdda_mishchenko_v1;
+    constexpr auto reference = &ifdda_mishchenko_v2;
 #endif
 
     const double cp = std::cos(rotation[0]), sp = std::sin(rotation[0]);
@@ -234,15 +235,25 @@ extern "C" void ifdda_report_tmatrix_(const int* shape, const REAL* dimensions,
     const auto ep = project(p_basis,incident), es = project(s,incident);
     const double angle = std::atan2(s_norm,dot(axis,k))*180/reference_pi;
     const auto index = std::sqrt(std::complex<double>(*epsilon));
+    int requested_precision = 0;
+    if (const char* value = std::getenv("IFDDA_TMATRIX_PRECISION")) {
+        const std::string mode(value);
+        if (mode == "dp") requested_precision = 1;
+        else if (mode == "qp") requested_precision = 2;
+        else if (mode != "auto" && !mode.empty()) {
+            std::puts(" T-matrix (Mishchenko) unavailable: IFDDA_TMATRIX_PRECISION must be auto, dp or qp.");
+            return;
+        }
+    }
     double sections[3], variation = 0;
-    int order = 0, quadrature = 0;
+    int order = 0, quadrature = 0, precision_used = 0;
     // The original Fortran uses COMMON blocks shared across calls.
     static std::mutex reference_mutex;
     int status;
     {
         const std::lock_guard<std::mutex> lock(reference_mutex);
         status = reference(*shape,radius,ratio,longest,index.real(),index.imag(),angle,
-            ep.real(),ep.imag(),es.real(),es.imag(),sections,&order,&quadrature,&variation);
+            ep.real(),ep.imag(),es.real(),es.imag(),requested_precision,sections,&order,&quadrature,&variation,&precision_used);
     }
     if (status != 0) {
         std::printf(" T-matrix (Mishchenko) unavailable: %s.\n",
@@ -253,8 +264,8 @@ extern "C" void ifdda_report_tmatrix_(const int* shape, const REAL* dimensions,
     const char* labels[] = {"Cext","Csca","Cabs"};
     const double dda[] = {*dda_ext,*dda_sca,*dda_abs};
     const double area = double(*wavelength)*double(*wavelength);
-    std::printf(" T-matrix (Mishchenko, OpenMP + CUDA FP64): N=%d, surface quadrature=%d, relative variation=%.3g\n",
-        order,quadrature,variation);
+    std::printf(" T-matrix (Mishchenko, OpenMP + CUDA FP64): N=%d, surface quadrature=%d, relative variation=%.3g, T-matrix precision=%s\n",
+        order,quadrature,variation,precision_used==2 ? "qp" : "dp");
     for (int i=0; i<3; ++i) {
         const double value = sections[i]*area;
         std::printf(" %s (T-matrix) = %26.16E m2\n",labels[i],value);

@@ -1,7 +1,7 @@
 # Optional because the original NASA code is supplied separately.
 function(ifdda_configure_mishchenko option_name)
     set(_default ON)
-    foreach(_f ampld.lp.f ampld.par.f lpd.f)
+    foreach(_f ampld.lp.f ampld.par.f lpd.f amplq.lp.f amplq.par.f lpq.f)
         if(NOT EXISTS "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/NASA/${_f}")
             set(_default OFF)
         endif()

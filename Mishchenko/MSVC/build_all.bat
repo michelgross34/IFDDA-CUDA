@@ -19,4 +19,6 @@ for %%F in (ifdda_mishchenko.lib ifdda_mishchenko_cpu.lib ifdda_mishchenko_openm
     if errorlevel 1 exit /b 1
 )
 python "%source_dir%\..\test_backends.py" "%build_dir%"
+if errorlevel 1 exit /b %errorlevel%
+python "%source_dir%\..\test_backends.py" "%build_dir%" --qp
 exit /b %errorlevel%

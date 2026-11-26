@@ -7,7 +7,7 @@ module mishchenko_reference
 #endif
   implicit none
   private
-  public :: ifdda_mishchenko_v1, ifdda_mishchenko_backend
+  public :: ifdda_mishchenko_v1, ifdda_mishchenko_v2, ifdda_mishchenko_backend
   real(c_double), parameter :: pi = acos(-1.0_c_double)
 #ifdef MISH_CUDA
   interface
@@ -39,22 +39,46 @@ contains
     real(c_double), value :: ep_real, ep_imag, es_real, es_imag
     real(c_double), intent(out) :: sections(3), variation
     integer(c_int), intent(out) :: order, quadrature
+    integer(c_int) :: precision_used
+    status=ifdda_mishchenko_v2(shape,radius,ratio,longest,mr,mi,theta, &
+        ep_real,ep_imag,es_real,es_imag,0_c_int,sections,order,quadrature,variation,precision_used)
+  end function ifdda_mishchenko_v1
+
+  integer(c_int) function ifdda_mishchenko_v2(shape,radius,ratio,longest,mr,mi,theta, &
+      ep_real,ep_imag,es_real,es_imag,precision,sections,order,quadrature,variation,precision_used) &
+      bind(c,name="ifdda_mishchenko_v2") result(status)
+    integer(c_int), value :: shape,precision
+    real(c_double), value :: radius,ratio,longest,mr,mi,theta,ep_real,ep_imag,es_real,es_imag
+    real(c_double), intent(out) :: sections(3),variation
+    integer(c_int), intent(out) :: order,quadrature,precision_used
 #ifdef _OPENMP
     integer :: previous_threads, env_length, env_status
+#endif
+    precision_used=0
+    sections=0; order=0; quadrature=0; variation=0
+    status=1
+    if (precision<0.or.precision>2) return
+#ifdef _OPENMP
     previous_threads = omp_get_max_threads()
     call get_environment_variable('OMP_NUM_THREADS',length=env_length,status=env_status)
     if (env_status /= 0 .or. env_length == 0) call omp_set_num_threads(min(8,previous_threads))
 #endif
-    status = calculate_sections(shape,radius,ratio,longest,mr,mi,theta, &
-        ep_real,ep_imag,es_real,es_imag,sections,order,quadrature,variation)
+    precision_used=max(1,precision)
+    status=calculate_sections(shape,radius,ratio,longest,mr,mi,theta, &
+        ep_real,ep_imag,es_real,es_imag,precision_used,sections,order,quadrature,variation)
+    if (precision==0.and.status==2) then
+      precision_used=2
+      status=calculate_sections(shape,radius,ratio,longest,mr,mi,theta, &
+        ep_real,ep_imag,es_real,es_imag,precision_used,sections,order,quadrature,variation)
+    end if
 #ifdef _OPENMP
     call omp_set_num_threads(previous_threads)
 #endif
-  end function ifdda_mishchenko_v1
+  end function ifdda_mishchenko_v2
 
   integer(c_int) function calculate_sections(shape,radius,ratio,longest,mr,mi,theta, &
-      ep_real,ep_imag,es_real,es_imag,sections,order,quadrature,variation) result(status)
-    integer(c_int), value :: shape
+      ep_real,ep_imag,es_real,es_imag,precision,sections,order,quadrature,variation) result(status)
+    integer(c_int), value :: shape,precision
     real(c_double), value :: radius,ratio,longest,mr,mi,theta,ep_real,ep_imag,es_real,es_imag
     real(c_double), intent(out) :: sections(3),variation
     integer(c_int), intent(out) :: order,quadrature
@@ -103,6 +127,10 @@ contains
       max_order = 72
       max_quadrature = 500
       tolerance = 1.0e-4_c_double
+    end if
+    if (precision==2) then
+      max_order=72
+      max_quadrature=500
     end if
     stable_steps = 0
     status = 2
@@ -154,7 +182,11 @@ contains
       real(c_double), parameter :: lambda = 1.0_c_double, zero = 0.0_c_double
 
       ok = .false.
-      call build_mish(shape,radius,ratio,lambda,mr,mi,n,q,core_status)
+      if (precision==2) then
+        call build_mish_qp(shape,radius,ratio,lambda,mr,mi,n,q,core_status)
+      else
+        call build_mish(shape,radius,ratio,lambda,mr,mi,n,q,core_status)
+      end if
       if (core_status /= 0) return
 #ifdef MISH_CUDA
       call gauss(n+2,0,0,mu,w)

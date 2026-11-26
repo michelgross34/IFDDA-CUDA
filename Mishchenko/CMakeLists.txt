@@ -13,19 +13,19 @@ endif()
 set(mish_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 set(nasa_dir "${mish_dir}/NASA")
 set(work_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
-set(core "${work_dir}/mish_core.f" "${work_dir}/lpd.f")
+set(core "${work_dir}/mish_core.f" "${work_dir}/lpd.f" "${work_dir}/mish_qp.f")
 set(wrapper "${mish_dir}/mishchenko_reference.f90")
 set(fortran_flags -std=legacy -fallow-argument-mismatch -ffixed-line-length-none -ffree-line-length-none -cpp)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-foreach(f ampld.lp.f ampld.par.f lpd.f)
+foreach(f ampld.lp.f ampld.par.f lpd.f amplq.lp.f amplq.par.f lpq.f)
     if(NOT EXISTS "${nasa_dir}/${f}")
         message(FATAL_ERROR "Obtain the original NASA fixed-orientation source: ${nasa_dir}/${f}")
     endif()
 endforeach()
 add_custom_command(OUTPUT ${core}
     COMMAND Python3::Interpreter "${mish_dir}/prepare_core.py" --output-dir "${work_dir}"
-    DEPENDS "${mish_dir}/prepare_core.py" "${mish_dir}/tmatrix_openmp.py"
-        "${nasa_dir}/ampld.lp.f" "${nasa_dir}/ampld.par.f" "${nasa_dir}/lpd.f"
+    DEPENDS "${mish_dir}/prepare_core.py" "${mish_dir}/tmatrix_openmp.py" "${mish_dir}/quad_intrinsics.py"
+        "${nasa_dir}/ampld.lp.f" "${nasa_dir}/ampld.par.f" "${nasa_dir}/lpd.f" "${nasa_dir}/amplq.lp.f" "${nasa_dir}/amplq.par.f" "${nasa_dir}/lpq.f"
     VERBATIM)
 add_custom_target(ifdda_mishchenko_generated DEPENDS ${core})
 
@@ -92,7 +92,7 @@ function(mish_variant suffix backend output_name)
         set(dll "${out}/${output_name}.dll")
         set(gnu_import "${out}/lib${output_name}.dll.a")
         set(def "${work_dir}/${output_name}.def")
-        file(GENERATE OUTPUT "${def}" CONTENT "LIBRARY ${output_name}.dll\nEXPORTS\n    ifdda_mishchenko_v1\n    ifdda_mishchenko_backend\n")
+        file(GENERATE OUTPUT "${def}" CONTENT "LIBRARY ${output_name}.dll\nEXPORTS\n    ifdda_mishchenko_v1\n    ifdda_mishchenko_v2\n    ifdda_mishchenko_backend\n")
         set(link_deps)
         if(backend EQUAL 2)
             list(APPEND link_deps "${kernel_import}")

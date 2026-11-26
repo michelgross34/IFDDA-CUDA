@@ -18,6 +18,7 @@ void usage(std::ostream& output) {
            << "  ifdda_mishchenko_sections ellipsoid wavelength_nm a_nm b_nm c_nm mr mi theta_deg\n"
            << "  ifdda_mishchenko_sections cylinder wavelength_nm radius_nm height_nm mr mi theta_deg\n"
            << "  ifdda_mishchenko_sections capsule wavelength_nm radius_nm straight_length_nm mr mi theta_deg\n"
+           << "  Append --precision auto|dp|qp (default auto).\n"
            << "  Append [Ep_re Ep_im Es_re Es_im] to specify polarization.\n"
            << "  Without arguments, run spheroid 630 140 280 1.5 0.02 27 with E_theta polarization.\n";
 }
@@ -68,6 +69,14 @@ int main(int argc, char** argv) {
         usage(std::cout);
         return 0;
     }
+    int precision=0;
+    if (argc>=3 && std::string_view(argv[argc-2])=="--precision") {
+        const std::string_view mode=argv[argc-1];
+        if(mode=="dp") precision=1;
+        else if(mode=="qp") precision=2;
+        else if(mode!="auto") { usage(std::cerr); return 1; }
+        argc-=2;
+    }
     constexpr std::array<const char*, 8> default_arguments{
         "ifdda_mishchenko_sections", "spheroid", "630", "140", "280", "1.5", "0.02", "27"
     };
@@ -112,10 +121,10 @@ int main(int argc, char** argv) {
             }
         }
         double sections[3], variation;
-        int order, quadrature;
-        const int status = ifdda_mishchenko_v1(object.shape, volume_radius, ratio,
+        int order, quadrature, precision_used;
+        const int status = ifdda_mishchenko_v2(object.shape, volume_radius, ratio,
             longest, mr, mi, theta, polarization[0], polarization[1], polarization[2],
-            polarization[3], sections, &order, &quadrature, &variation);
+            polarization[3], precision, sections, &order, &quadrature, &variation, &precision_used);
         if (status != IFDDA_MISHCHENKO_OK) {
             std::cerr << "Mishchenko: "
                       << (status == IFDDA_MISHCHENKO_CUDA_ERROR ? "CUDA backend error\n" :
@@ -129,7 +138,8 @@ int main(int argc, char** argv) {
                   << "Cabs (T-matrix) = " << sections[2] * area << " m2\n"
                   << "Order = " << order << ", surface quadrature = " << quadrature
                   << ", relative variation = " << variation << '\n'
-                  << "Backend = " << ifdda_mishchenko_backend() << '\n';
+                  << "Backend = " << ifdda_mishchenko_backend() << '\n'
+                  << "T-matrix precision = " << (precision_used==2 ? "qp" : "dp") << '\n';
     } catch (const std::exception& error) {
         std::cerr << "Mishchenko: " << error.what() << '\n';
         return IFDDA_MISHCHENKO_INVALID_INPUT;

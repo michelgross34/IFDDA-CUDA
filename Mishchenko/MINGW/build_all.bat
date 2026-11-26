@@ -20,4 +20,6 @@ for %%F in (libifdda_mishchenko.dll.a libifdda_mishchenko_cpu.dll.a libifdda_mis
     if errorlevel 1 exit /b 1
 )
 python "%source_dir%\..\test_backends.py" "%build_dir%"
+if errorlevel 1 exit /b %errorlevel%
+python "%source_dir%\..\test_backends.py" "%build_dir%" --qp
 exit /b %errorlevel%
